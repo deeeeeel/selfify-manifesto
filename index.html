@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Manifesto - Confess Wall</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Lexend:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables for easy theme management */
+        :root {
+            --background-color: #121212;
+            --surface-color: #1e1e1e;
+            --primary-color: #fde047; /* Brighter Yellow */
+            --primary-text-color: #e5e5e5;
+            --secondary-text-color: #a3a3a3;
+            --card-background: #2a2a2a;
+            --border-color: #404040;
+            --font-main: 'Inter', sans-serif;
+            --font-heading: 'Lexend', sans-serif;
+        }
+
+        /* Custom Scrollbar for the main page */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--surface-color);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ffc107;
+        }
+
+        body {
+            background: var(--background-color);
+            color: var(--primary-text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 40px 16px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+            overflow-y: auto; /* Allow body to scroll if content exceeds viewport */
+        }
+
+        /* CSS to prevent body scrolling when a modal is open */
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        h2 {
+            font-family: var(--font-heading);
+            font-size: 28px;
+            /* Updated color to grey and added a subtle yellow glow */
+            color: var(--card-background); /* Grey color similar to card background */
+            text-shadow: 0 0 8px rgba(253, 224, 71, 0.6), /* Yellow glow */
+                         0 0 15px rgba(253, 224, 71, 0.3); /* Fainter glow for depth */
+            margin-bottom: 16px;
+        }
+
+        .poem {
+            font-style: italic;
+            color: var(--secondary-text-color);
+            line-height: 1.5; /* Adjusted line height for more compact spacing */
+            margin-bottom: 32px;
+            font-size: 14px; /* Readable font size */
+            white-space: pre-line; /* Preserves line breaks from HTML */
+            padding: 0 8px; /* Added slight horizontal padding to prevent text from touching edges */
+        }
+
+        .question {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 32px 0 16px;
+            color: var(--primary-text-color);
+            text-align: center;
+        }
+
+        /* Style for the extra bold yellow text */
+        .question .highlight-text {
+            color: var(--primary-color);
+            font-weight: bolder;
+        }
+
+        /* Confess list container - now responsible for its own scrolling and hidden scrollbar */
+        .confess-list {
+            background: var(--surface-color);
+            border-radius: 16px;
+            max-height: 320px; /* Max height for scrolling */
+            overflow-y: auto;
+            padding: 8px;
+            margin-bottom: 32px;
+            border: 1px solid var(--border-color);
+            /* Hide scrollbar for this specific section */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;  /* IE and Edge */
+        }
+        .confess-list::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera*/
+        }
+
+        .confess-post {
+            background: var(--card-background);
+            padding: 16px;
+            border-radius: 12px;
+            margin: 8px;
+            text-align: left;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .confess-post:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            border-color: var(--primary-color);
+        }
+
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 14px;
+            margin-top: 12px;
+            color: var(--secondary-text-color);
+        }
+        .actions span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .confess-form {
+            background: var(--surface-color);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 32px;
+        }
+
+        button {
+            width: 100%;
+            background: var(--primary-color);
+            color: #111;
+            border: none;
+            padding: 14px;
+            font-weight: bold;
+            font-size: 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: var(--font-heading);
+        }
+        button:hover {
+            background: #ffc107;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(253, 224, 71, 0.2);
+        }
+
+        .email-section {
+            margin-top: 40px;
+            padding: 24px;
+            background: var(--surface-color);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+        }
+        .email-section p {
+            margin: 0 0 16px 0;
+            font-size: 14px;
+            color: var(--primary-text-color);
+        }
+
+        .email-section input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background: var(--background-color);
+            color: var(--primary-text-color);
+            font-size: 16px;
+            font-family: var(--font-main);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+        }
+        .email-section input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(253, 224, 71, 0.2);
+        }
+
+        .email-section button {
+            margin-top: 16px;
+        }
+
+        /* Custom Modal Styles (for confession input and success message) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 1000;
+        }
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background: var(--surface-color);
+            padding: 24px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 380px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+        .modal-overlay.show .modal-content {
+            transform: scale(1);
+        }
+        .modal-content h3 {
+            margin-top: 0;
+            margin-bottom: 16px;
+            color: var(--primary-color);
+            font-family: var(--font-heading);
+        }
+        .modal-content p {
+            margin-bottom: 20px;
+            color: var(--secondary-text-color);
+        }
+        .modal-textarea {
+            width: 100%;
+            box-sizing: border-box;
+            background: var(--background-color);
+            color: var(--primary-text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 16px;
+            resize: none;
+            margin-bottom: 16px;
+            font-family: var(--font-main);
+        }
+        .alter-input-wrapper {
+            display: flex;
+            align-items: center;
+            background: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding-left: 14px;
+            margin-bottom: 20px;
+        }
+        .alter-input-wrapper span {
+            color: var(--secondary-text-color);
+            font-size: 16px;
+        }
+        .modal-input {
+            flex-grow: 1;
+            border: none;
+            background: transparent;
+            color: var(--primary-text-color);
+            font-size: 16px;
+            padding: 14px;
+        }
+        .modal-input:focus {
+            outline: none;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+        }
+        .modal-actions button { /* Specific style for buttons within modal-actions */
+            width: 100%; /* Ensure buttons inside modal-actions take full width */
+        }
+
+
+        /* Quotes Section Styles */
+        .quotes-section {
+            margin-bottom: 32px;
+        }
+        .quotes-slider-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        .quotes-slider {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; /* Firefox */
+        }
+        .quotes-slider::-webkit-scrollbar {
+            display: none; /* Safari and Chrome */
+        }
+        .quote-slide {
+            flex: 0 0 100%;
+            width: 100%;
+            scroll-snap-align: center;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .quote-slide svg {
+            width: 100%;
+            height: auto;
+            border-radius: 16px;
+        }
+        .slider-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            left: 0;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+        }
+        .slider-nav button {
+            pointer-events: all;
+            background: rgba(0,0,0,0.3);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .slider-nav button#prevQuote {
+            transform: translateX(-50%);
+        }
+        .slider-nav button#nextQuote {
+            transform: translateX(50%);
+        }
+        .quote-actions {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 16px;
+        }
+        .quote-actions button {
+            background: none;
+            border: none;
+            color: var(--secondary-text-color);
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            flex-direction: column; /* Stack icon and text vertically */
+            align-items: center; /* Center horizontally */
+            justify-content: center; /* Center vertically */
+            gap: 4px; /* Reduced gap between icon and text */
+            font-size: 14px;
+            opacity: 0.8;
+            transition: opacity 0.2s ease;
+        }
+        .quote-actions button:hover {
+            opacity: 1;
+            color: var(--primary-text-color);
+        }
+        .quote-actions svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Toast/Snackbar message for "Copied!" and success messages */
+        .toast-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary-color);
+            color: #111;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: var(--font-main);
+            font-weight: bold;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 1001;
+        }
+        .toast-message.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Manifesto Selfify</h2>
+        <div class="poem">
+            Ketika Dunia makin berisik, orang makin toxic
+            dan Sosmed? Udah gak asik. <br/>
+            Dan lo... ngerasa lost, stuck,
+            lelah banget ngejar validasi? <br/>
+            Kalau hati lo gak terusik, 
+            Mungkin lo beneran lagi sakit. <br/>
+            Tapi dengerin— <br/>
+            Lo berhak ngerem, tarik napas
+            Diem sebentar. <br/>
+            Istirahat itu bukan tanda lemah,
+            itu bentuk sadar. <br/>
+            Biar bisa balik lagi...
+            Lebih kuat. Lebih jujur. Lebih tumbuh. <br/>
+            <span style="color: var(--primary-color); font-weight: bold;">"Selfify.id bukan tempat buat kabur,
+            tapi tempat lo pulang ke diri lo sendiri."</span></br>
+            Karena hidup gak cuma buat dilewatin
+            tapi dijalanin dengan arah & makna.
+        </div>
+        
+        <div class="quotes-section">
+            <div class="quotes-slider-wrapper">
+                <div class="quotes-slider" id="quotesSlider">
+                    <div class="quote-slide">
+                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="100%" height="100%" fill="#1e1e1e"/>
+                            <text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" fill="#e5e5e5" font-size="20" font-family="'Inter', sans-serif" font-weight="bold">
+                                <tspan x="50%" dy="-1.2em">Rehat itu bukan mager,</tspan>
+                                <tspan x="50%" dy="1.2em">tapi investasi waras.</tspan>
+                            </text>
+                        </svg>
+                    </div>
+                    <div class="quote-slide">
+                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="100%" height="100%" fill="#fde047"/>
+                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#121212" font-size="24" font-family="'Lexend', sans-serif" font-weight="bold">
+                                <tspan x="50%" dy="-0.6em">Cukup itu mindset,</tspan>
+                                <tspan x="50%" dy="1.2em">bukan saldo.</tspan>
+                            </text>
+                        </svg>
+                    </div>
+                    <div class="quote-slide">
+                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="100%" height="100%" fill="#2a2a2a"/>
+                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#e5e5e5" font-size="18" font-family="'Inter', sans-serif">
+                                <tspan x="50%" dy="-1.5em">Hidup bukan lomba,</tspan>
+                                <tspan x="50%" dy="1.2em">tiap orang punya</tspan>
+                                <tspan x="50%" dy="1.2em">pace-nya sendiri.</tspan>
+                            </text>
+                        </svg>
+                    </div>
+                    <div class="quote-slide">
+                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="100%" height="100%" fill="#1e1e1e"/>
+                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#e5e5e5" font-size="20" font-family="'Inter', sans-serif" font-weight="bold">
+                                <tspan x="50%" dy="-0.6em">Vibes positif?</tspan>
+                                <tspan x="50%" dy="1.2em">Auto-healing.</tspan>
+                            </text>
+                        </svg>
+                    </div>
+                    <div class="quote-slide">
+                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="100%" height="100%" fill="#fde047"/>
+                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#121212" font-size="20" font-family="'Lexend', sans-serif" font-weight="bold">
+                                <tspan x="50%" dy="-0.6em">Self-care itu bukan egois,</tspan>
+                                <tspan x="50%" dy="1.2em">tapi biar gak oleng.</tspan>
+                            </text>
+                        </svg>
+                    </div>
+                    <div class="quote-slide">
+                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="100%" height="100%" fill="#2a2a2a"/>
+                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#e5e5e5" font-size="18" font-family="'Inter', sans-serif">
+                                <tspan x="50%" dy="-0.6em">Kalo burnout itu real,</tspan>
+                                <tspan x="50%" dy="1.2em">istirahat juga harus total.</tspan>
+                            </text>
+                        </svg>
+                    </div>
+                    <div class="quote-slide">
+                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="100%" height="100%" fill="#1e1e1e"/>
+                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#e5e5e5" font-size="20" font-family="'Inter', sans-serif" font-weight="bold">
+                                <tspan x="50%" dy="-0.6em">Self-improvement itu wajib,</tspan>
+                                <tspan x="50%" dy="1.2em">biar gak stuck di situ-situ aja.</tspan>
+                            </text>
+                        </svg>
+                    </div>
+                    <div class="quote-slide">
+                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="100%" height="100%" fill="#fde047"/>
+                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#121212" font-size="20" font-family="'Lexend', sans-serif" font-weight="bold">
+                                <tspan x="50%" dy="-0.6em">Dulu FOMO, sekarang JOMO.</tspan>
+                                <tspan x="50%" dy="1.2em">Enjoy your own pace.</tspan>
+                            </text>
+                        </svg>
+                    </div>
+                </div>
+                <div class="slider-nav">
+                    <button id="prevQuote">‹</button>
+                    <button id="nextQuote">›</button>
+                </div>
+            </div>
+            <div class="quote-actions">
+                <button id="shareQuoteBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.186 2.25 2.25 0 0 0-3.933 2.186Z" /></svg>
+                    Share
+                </button>
+                <button id="downloadQuoteBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+                    Download
+                </button>
+            </div>
+        </div>
+
+        <div class="question">Hal apa yang paling lo gak mau<br/><span class="highlight-text">orang tau tentang elo?</span></div>
+
+        <div class="confess-list" id="confessList">
+            <!-- Posts are dynamically added -->
+            <div id="loadingMessage" style="color: var(--secondary-text-color); padding: 20px;">Memuat pengakuan...</div>
+        </div>
+
+        <div class="confess-form">
+            <button id="openConfessModalBtn">Curhat? Confess? Boleh banget.</button>
+        </div>
+
+        <div class="email-section">
+            <p>Drop email lo, and let’s be part of the first <b style="color: var(--primary-color);">Selfify</b> circle. We’ve got cool features yang gak cuman keren, tapi juga super relatable—tailored just for you.</p>
+            <input type="email" placeholder="you@email.com" />
+            <button>Kirim 🔔</button>
+        </div>
+    </div>
+
+    <!-- Custom Modal for New Confession -->
+    <div class="modal-overlay" id="confessModal">
+        <div class="modal-content">
+            <h3>Buat Pengakuan</h3>
+            <textarea id="modalConfessText" class="modal-textarea" rows="5" placeholder="Tulis pengakuan lo di sini..."></textarea>
+            <div class="alter-input-wrapper">
+                <span>@</span>
+                <input type="text" id="modalAlterName" class="modal-input" placeholder="nama_alter_lo">
+            </div>
+            <div class="modal-actions">
+                <button id="cancelConfess" style="background: #444;">Batal</button>
+                <button id="submitConfess">Kirim</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Modal for Success Message -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-content">
+            <h3>Terkirim! 🙏</h3>
+            <p>Pengakuan lo udah aman di sini. Terima kasih sudah berbagi.</p>
+            <button id="closeSuccessModal">Tutup</button>
+        </div>
+    </div>
+
+    <!-- Custom Modal for Error Message -->
+    <div class="modal-overlay" id="errorModal">
+        <div class="modal-content">
+            <h3>Error! 😔</h3>
+            <p id="errorMessage">Terjadi kesalahan saat menyimpan pengakuan Anda. Silakan coba lagi.</p>
+            <button id="closeErrorModal">Tutup</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase Configuration (DO NOT EDIT)
+        // These variables are provided by the Canvas environment.
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let userId = null; // To store the authenticated user ID
+
+        // --- DOM Elements ---
+        const confessList = document.getElementById('confessList');
+        const loadingMessage = document.getElementById('loadingMessage');
+        
+        const openConfessModalBtn = document.getElementById('openConfessModalBtn');
+        const confessModal = document.getElementById('confessModal');
+        const successModal = document.getElementById('successModal');
+        const errorModal = document.getElementById('errorModal'); // New error modal
+        
+        const modalConfessText = document.getElementById('modalConfessText');
+        const modalAlterName = document.getElementById('modalAlterName');
+
+        const submitConfessBtn = document.getElementById('submitConfess');
+        const cancelConfessBtn = document.getElementById('cancelConfess');
+        const closeSuccessBtn = document.getElementById('closeSuccessModal');
+        const closeErrorBtn = document.getElementById('closeErrorModal'); // New close error button
+        const errorMessageDisplay = document.getElementById('errorMessage'); // Element to display error message
+
+        const quotesSlider = document.getElementById('quotesSlider');
+        const prevQuoteBtn = document.getElementById('prevQuote');
+        const nextQuoteBtn = document.getElementById('nextQuote');
+        const shareQuoteBtn = document.getElementById('shareQuoteBtn');
+        const downloadQuoteBtn = document.getElementById('downloadQuoteBtn');
+
+        // --- Functions ---
+
+        /**
+         * Shows a modal by adding the 'show' class and prevents body scrolling.
+         * @param {HTMLElement} modalElement - The modal element to show.
+         */
+        function showModal(modalElement) {
+            modalElement.classList.add('show');
+            document.body.classList.add('modal-open'); // Add class to body to prevent scrolling
+        }
+
+        /**
+         * Hides a modal by removing the 'show' class and re-enables body scrolling.
+         * @param {HTMLElement} modalElement - The modal element to hide.
+         */
+        function hideModal(modalElement) {
+            modalElement.classList.remove('show');
+            document.body.classList.remove('modal-open'); // Remove class from body to re-enable scrolling
+        }
+
+        /**
+         * Renders the list of confessions to the DOM.
+         * Clears existing list items and appends new ones from the provided array.
+         * @param {Array<Object>} confessionsData - An array of confession objects.
+         */
+        function renderConfessions(confessionsData) {
+            confessList.innerHTML = ''; // Clear existing list
+            if (confessionsData.length === 0) {
+                confessList.innerHTML = '<div style="color: var(--secondary-text-color); padding: 20px;">Belum ada pengakuan. Jadilah yang pertama!</div>';
+                return;
+            }
+
+            confessionsData.forEach((confess) => {
+                const post = document.createElement('div');
+                post.className = 'confess-post';
+                post.innerHTML = `
+                    ${confess.text}
+                    <div class="actions">
+                        <span>❤️ ${confess.likes || 0}</span>
+                        <span>🔥 ${confess.fires || 0}</span>
+                        <span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M4.715 6.542 3.343 7.914a.5.5 0 0 0 .707.707l1.414-1.414a.5.5 0 0 0-.707-.707m-1.414 0L2 6.542a.5.5 0 0 0-.707.707l1.414 1.414a.5.5 0 0 0 .707-.707m6.428 2.122a.5.5 0 0 0 .707-.707L11.086 7.914a.5.5 0 1 0-.707.707l1.414 1.414zm.707-2.122L12.5 7.914a.5.5 0 0 0 .707.707l1.414-1.414a.5.5 0 0 0-.707-.707M10 13a1 1 0 0 1-1-1v-2.5a.5.5 0 0 0-1 0V12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.5a1 1 0 0 1 1 1v1.5a.5.5 0 0 0 1 0V6a1 1 0 0 1 1-1H12a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-2z"/></svg>
+                            Share
+                        </span>
+                    </div>
+                `;
+                confessList.appendChild(post);
+            });
+            // Auto-scroll to the bottom when new confessions are rendered
+            confessList.scrollTop = confessList.scrollHeight;
+        }
+
+        /**
+         * Fetches confessions from Firestore and sets up a real-time listener.
+         */
+        function setupConfessionsListener() {
+            if (!db) {
+                console.error("Firestore is not initialized.");
+                return;
+            }
+            
+            // Define the collection path for public data
+            const confessionsCollectionRef = collection(db, `artifacts/${appId}/public/data/confessions`);
+            
+            // Create a query to order confessions by creation date (newest first)
+            // Note: orderBy() can lead to index missing errors if not handled in Firestore rules/indexes.
+            // For simplicity, we'll fetch and sort in memory if orderBy causes issues.
+            const q = query(confessionsCollectionRef); // Removed orderBy for broader compatibility
+
+            // Set up a real-time listener
+            onSnapshot(q, (snapshot) => {
+                const fetchedConfessions = [];
+                snapshot.forEach((doc) => {
+                    fetchedConfessions.push(doc.data());
+                });
+                // Sort by timestamp in descending order (newest first) in memory
+                fetchedConfessions.sort((a, b) => (b.timestamp?.toDate() || 0) - (a.timestamp?.toDate() || 0));
+                renderConfessions(fetchedConfessions);
+                if (loadingMessage) loadingMessage.style.display = 'none'; // Hide loading message
+            }, (error) => {
+                console.error("Error fetching confessions: ", error);
+                if (loadingMessage) loadingMessage.textContent = 'Gagal memuat pengakuan.';
+                showErrorModal('Gagal memuat pengakuan. Silakan coba refresh halaman.');
+            });
+        }
+
+        /**
+         * Handles the submission of a new confession to Firestore.
+         */
+        async function submitConfession() {
+            const text = modalConfessText.value.trim();
+            const alter = modalAlterName.value.trim();
+
+            let isValid = true;
+            
+            // Basic validation: check if text and alterName are not empty
+            if (text.length === 0) {
+                modalConfessText.style.borderColor = 'red';
+                setTimeout(() => { modalConfessText.style.borderColor = 'var(--border-color)'; }, 1500);
+                isValid = false;
+            }
+            
+            if (alter.length === 0) {
+                modalAlterName.parentElement.style.borderColor = 'red';
+                setTimeout(() => { modalAlterName.parentElement.style.borderColor = 'var(--border-color)'; }, 1500);
+                isValid = false;
+            }
+
+            if (!isValid) return; // Stop if validation fails
+            
+            try {
+                // Ensure user is authenticated before adding data
+                if (!userId) {
+                    console.error("User not authenticated. Cannot submit confession.");
+                    showErrorModal('Anda perlu login untuk mengirim pengakuan.');
+                    return;
+                }
+
+                // Add a new document to the 'confessions' collection
+                await addDoc(collection(db, `artifacts/${appId}/public/data/confessions`), {
+                    text: text,
+                    alterName: alter,
+                    likes: 0,
+                    fires: 0,
+                    timestamp: serverTimestamp(), // Use server timestamp for consistent ordering
+                    userId: userId // Store the user ID who made the confession
+                });
+                
+                // Reset input fields
+                modalConfessText.value = '';
+                modalAlterName.value = '';
+                
+                // Hide confession modal and show success modal
+                hideModal(confessModal);
+                showModal(successModal);
+
+            } catch (e) {
+                console.error("Error adding document: ", e);
+                showErrorModal('Terjadi kesalahan saat mengirim pengakuan. Silakan coba lagi.');
+            }
+        }
+
+        /**
+         * Displays an error modal with a specific message.
+         * @param {string} message - The error message to display.
+         */
+        function showErrorModal(message) {
+            errorMessageDisplay.textContent = message;
+            showModal(errorModal);
+        }
+
+        /**
+         * Downloads the currently visible SVG quote as an SVG file.
+         */
+        function downloadCurrentQuote() {
+            // Calculate current slide index based on scroll position
+            const slideWidth = quotesSlider.querySelector('.quote-slide').clientWidth;
+            const currentIndex = Math.round(quotesSlider.scrollLeft / slideWidth);
+            const currentSVG = quotesSlider.querySelectorAll('svg')[currentIndex];
+            
+            if (!currentSVG) {
+                console.error("No SVG found to download.");
+                return;
+            }
+
+            // Serialize SVG to string
+            const serializer = new XMLSerializer();
+            const svgString = serializer.serializeToString(currentSVG);
+            const blob = new Blob([svgString], {type: "image/svg+xml"});
+            const url = URL.createObjectURL(blob);
+            
+            // Create a temporary anchor element to trigger download
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `quote-${currentIndex + 1}.svg`; // Suggest a filename
+            document.body.appendChild(a);
+            a.click(); // Programmatically click the link to start download
+            document.body.removeChild(a); // Clean up the temporary link
+            URL.revokeObjectURL(url); // Release the object URL
+        }
+
+        /**
+         * Copies the text of the current quote to the clipboard and shows a temporary message.
+         */
+        function copyCurrentQuoteTextAndShowMessage() {
+            const slideWidth = quotesSlider.querySelector('.quote-slide').clientWidth;
+            const currentIndex = Math.round(quotesSlider.scrollLeft / slideWidth);
+            const currentSVG = quotesSlider.querySelectorAll('svg')[currentIndex];
+
+            if (!currentSVG) {
+                console.error("No SVG found to copy text from.");
+                return;
+            }
+
+            // Extract text content from the SVG's <text> elements
+            let quoteText = '';
+            currentSVG.querySelectorAll('tspan').forEach(tspan => {
+                quoteText += tspan.textContent + '\n';
+            });
+            quoteText = quoteText.trim(); // Remove trailing newline
+
+            // Use a temporary textarea to copy text to clipboard
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = quoteText;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy'); // Deprecated but widely supported in iframes
+            document.body.removeChild(tempTextArea);
+
+            // Show a temporary "Copied!" message
+            const toast = document.createElement('div');
+            toast.className = 'toast-message';
+            toast.textContent = 'Teks disalin!'; // "Text copied!"
+            document.body.appendChild(toast);
+
+            // Show and then hide the toast message
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10); // Small delay to ensure reflow for transition
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+            }, 2000); // Hide after 2 seconds
+        }
+
+
+        // --- Event Listeners ---
+        // Event listener for opening the confession modal
+        openConfessModalBtn.addEventListener('click', () => {
+            showModal(confessModal);
+        });
+
+        // Event listener for submitting a new confession
+        submitConfessBtn.addEventListener('click', submitConfession);
+        
+        // Event listener for canceling a new confession
+        cancelConfessBtn.addEventListener('click', () => {
+            hideModal(confessModal);
+            modalConfessText.value = ''; // Clear textarea
+            modalAlterName.value = ''; // Clear input
+        });
+
+        // Event listener for closing the success message modal
+        closeSuccessBtn.addEventListener('click', () => {
+            hideModal(successModal);
+        });
+
+        // Event listener for closing the error message modal
+        closeErrorBtn.addEventListener('click', () => {
+            hideModal(errorModal);
+        });
+
+        // Event listener for navigating to the previous quote in the slider
+        prevQuoteBtn.addEventListener('click', () => {
+            quotesSlider.scrollBy({ left: -quotesSlider.clientWidth, behavior: 'smooth' });
+        });
+
+        // Event listener for navigating to the next quote in the slider
+        nextQuoteBtn.addEventListener('click', () => {
+            quotesSlider.scrollBy({ left: quotesSlider.clientWidth, behavior: 'smooth' });
+        });
+
+        // Event listener for downloading the current quote
+        downloadQuoteBtn.addEventListener('click', downloadCurrentQuote);
+
+        // Event listener for sharing the current quote (copies text to clipboard)
+        shareQuoteBtn.addEventListener('click', copyCurrentQuoteTextAndShowMessage);
+
+        // Close modals by clicking on the overlay
+        window.addEventListener('click', (e) => {
+            if (e.target === confessModal) hideModal(confessModal);
+            if (e.target === successModal) hideModal(successModal);
+            if (e.target === errorModal) hideModal(errorModal); // Close error modal on overlay click
+        });
+
+        // --- Initial Load ---
+        // Authenticate user and then set up Firestore listener
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                userId = user.uid;
+                console.log("Authenticated with Firebase. User ID:", userId);
+                setupConfessionsListener(); // Start listening for confessions once authenticated
+            } else {
+                // Sign in anonymously if no user is logged in
+                try {
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                    console.error("Error during anonymous sign-in:", error);
+                    showErrorModal('Gagal melakukan autentikasi. Beberapa fitur mungkin tidak berfungsi.');
+                    if (loadingMessage) loadingMessage.textContent = 'Gagal memuat pengakuan (autentikasi gagal).';
+                }
+            }
+        });
+
+        // Ensure the initial render of the slider is correct on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // No need to call renderConfessions here directly, as setupConfessionsListener will handle it
+            // after authentication.
+        });
+
+    </script>
+</body>
+</html>
