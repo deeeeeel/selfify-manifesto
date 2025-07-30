@@ -971,7 +971,15 @@
         // Firebase Configuration (DO NOT EDIT)
         // These variables are provided by the Canvas environment.
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        // HARDCODED FIREBASE CONFIGURATION
+        const firebaseConfig = {
+            apiKey: "AIzaSyBjaZ6QLUX-LzAPjyPRBHQNYNh1ZkAV_gk",
+            authDomain: "selfifyid-4d06c.firebaseapp.com",
+            projectId: "selfifyid-4d06c",
+            storageBucket: "selfifyid-4d06c.firebasestorage.app",
+            messagingSenderId: "583104647123",
+            appId: "1:583104647123:web:7abd11dc720165dfa9e926"
+        };
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         // Initialize Firebase
@@ -2061,15 +2069,29 @@
                 } else {
                     // Sign in anonymously if no user is logged in
                     try {
+                        // Attempt custom token sign-in first if token is present
                         if (initialAuthToken) {
                             await signInWithCustomToken(auth, initialAuthToken);
                         } else {
+                            // If no custom token, or custom token failed (handled by catch below), sign in anonymously
                             await signInAnonymously(auth);
                         }
                     } catch (error) {
-                        console.error("Error during anonymous sign-in:", error);
-                        showErrorModal('Gagal melakukan autentikasi. Beberapa fitur mungkin tidak berfungsi.');
-                        hideGlobalLoading(); // Ensure loading is hidden on auth error
+                        console.error("Error during authentication:", error);
+                        // If custom token mismatch, try anonymous sign-in as a fallback
+                        if (error.code === 'auth/custom-token-mismatch' || error.code === 'auth/invalid-custom-token') {
+                            console.warn("Custom token mismatch or invalid. Attempting anonymous sign-in as fallback.");
+                            try {
+                                await signInAnonymously(auth);
+                            } catch (anonError) {
+                                console.error("Error during anonymous sign-in fallback:", anonError);
+                                showErrorModal('Gagal melakukan autentikasi. Beberapa fitur mungkin tidak berfungsi.');
+                                hideGlobalLoading(); // Ensure loading is hidden on auth error
+                            }
+                        } else {
+                            showErrorModal('Gagal melakukan autentikasi. Beberapa fitur mungkin tidak berfungsi.');
+                            hideGlobalLoading(); // Ensure loading is hidden on auth error
+                        }
                     }
                 }
             });
