@@ -577,7 +577,7 @@
             flex-grow: 1;
             padding: 12px;
             border-radius: 12px;
-            border: 1px solid var(--border-color);
+            border: 11px solid var(--border-color);
             background: var(--background-color);
             color: var(--primary-text-color);
             font-size: 16px;
@@ -1206,12 +1206,7 @@
                             </svg>
                             Bagikan
                         </button>
-                        <button class="report-confession-btn" data-id="${confess.id}" data-text="${confess.text}">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 15v6m-3-1.5V9.75a2.25 2.25 0 0 0-2.25-2.25H9.75A2.25 2.25 0 0 0 7.5 9.75v9.75m6-9.75h3m-3 0a3 3 0 1 1-6 0m6 0v2.25m-3-2.25A3 3 0 0 0 9.75 18v.75m-3-9.75h.008v.008H6.75V9.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                            </svg>
-                            Laporkan
-                        </button>
+                        <!-- Tombol Laporkan dihapus sementara -->
                         ${confess.userId === userId ? `
                         <button class="delete-confession-btn" data-id="${confess.id}">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -1284,15 +1279,15 @@
                             shareConfession(confess.text); // Pass the text directly
                         });
                     }
-                    // Setup event listener for report button for real confessions
-                    const reportButton = post.querySelector(`.report-confession-btn`);
-                    if (reportButton) {
-                        reportButton.addEventListener('click', (e) => {
-                            const confessionIdToReport = e.currentTarget.dataset.id;
-                            const confessionTextToReport = e.currentTarget.dataset.text;
-                            showReportModal(confessionIdToReport, confessionTextToReport);
-                        });
-                    }
+                    // Tombol laporkan dihapus sementara
+                    // const reportButton = post.querySelector(`.report-confession-btn`);
+                    // if (reportButton) {
+                    //     reportButton.addEventListener('click', (e) => {
+                    //         const confessionIdToReport = e.currentTarget.dataset.id;
+                    //         const confessionTextToReport = e.currentTarget.dataset.text;
+                    //         showReportModal(confessionIdToReport, confessionTextToReport);
+                    //     });
+                    // }
                     // Setup event listener for delete button for real confessions
                     const deleteButton = post.querySelector(`.delete-confession-btn`);
                     if (deleteButton) { // This button only exists if userId matches
@@ -1314,12 +1309,13 @@
                         shareButton.style.opacity = '0.5';
                         shareButton.style.cursor = 'not-allowed';
                     }
-                    const reportButton = post.querySelector(`.report-confession-btn`);
-                    if (reportButton) {
-                        reportButton.disabled = true;
-                        reportButton.style.opacity = '0.5';
-                        reportButton.style.cursor = 'not-allowed';
-                    }
+                    // Tombol laporkan dihapus sementara
+                    // const reportButton = post.querySelector(`.report-confession-btn`);
+                    // if (reportButton) {
+                    //     reportButton.disabled = true;
+                    //     reportButton.style.opacity = '0.5';
+                    //     reportButton.style.cursor = 'not-allowed';
+                    // }
                     const deleteButton = post.querySelector(`.delete-confession-btn`);
                     if (deleteButton) {
                         deleteButton.disabled = true;
