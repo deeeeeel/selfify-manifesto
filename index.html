@@ -433,10 +433,11 @@
             padding: 0;
             box-sizing: border-box;
         }
-        .quote-slide svg {
+        .quote-slide img { /* Updated to target img instead of svg */
             width: 100%;
             height: auto;
             border-radius: 16px;
+            display: block; /* Remove extra space below image */
         }
         .slider-nav {
             position: absolute;
@@ -694,8 +695,11 @@
         <h2>Manifesto Selfify</h2>
         <div class="poem">
             Sekarang Dunia makin berisik, 
-            Orang-orang makin toxic
+            orang makin toxic
             dan Sosmed? Udah gak asik.
+
+            Kalau hati lo gak terusik, 
+            Mungkin lo beneran lagi sakit.
 
             Dan ketika elo Lelah ngejar validasi?
 
@@ -703,143 +707,13 @@
             tapi tempat lo pulang ke diri lo sendiri."</span>
 
             Karena hidup gak cuma buat dilewatin
-            tapi dijalanin dengan arah & makna.
+            but dijalanin dengan arah & makna.
         </div>
         
         <div class="quotes-section">
             <div class="quotes-slider-wrapper">
                 <div class="quotes-slider" id="quotesSlider">
-                    <div class="quote-slide">
-                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="100%" height="100%" fill="#1e1e1e"/>
-                            <text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" fill="#e5e5e5" font-size="20" font-family="'Inter', sans-serif" font-weight="bold">
-                                <tspan x="50%" dy="-1.2em">Rehat itu bukan mager,</tspan>
-                                <tspan x="50%" dy="1.2em">tapi investasi waras.</tspan>
-                            </text>
-                        </svg>
-                    </div>
-                    <div class="quote-slide">
-                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="100%" height="100%" fill="#fde047"/>
-                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#121212" font-size="24" font-family="'Lexend', sans-serif" font-weight="bold">
-                                <tspan x="50%" dy="-0.6em">Cukup itu mindset,</tspan>
-                                <tspan x="50%" dy="1.2em">bukan saldo.</tspan>
-                            </text>
-                        </svg>
-                    </div>
-                    <div class="quote-slide">
-                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="100%" height="100%" fill="#2a2a2a"/>
-                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#e5e5e5" font-size="18" font-family="'Inter', sans-serif">
-                                <tspan x="50%" dy="-1.5em">Hidup bukan lomba,</tspan>
-                                <tspan x="50%" dy="1.2em">tiap orang punya</tspan>
-                                <tspan x="50%" dy="1.2em">pace-nya sendiri.</tspan>
-                            </text>
-                        </svg>
-                    </div>
-                    <div class="quote-slide">
-                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="100%" height="100%" fill="#1e1e1e"/>
-                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#e5e5e5" font-size="20" font-family="'Inter', sans-serif" font-weight="bold">
-                                <tspan x="50%" dy="-0.6em">Vibes positif?</tspan>
-                                <tspan x="50%" dy="1.2em">Auto-healing.</tspan>
-                            </text>
-                        </svg>
-                    </div>
-                    <div class="quote-slide">
-                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="100%" height="100%" fill="#fde047"/>
-                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#121212" font-size="20" font-family="'Lexend', sans-serif" font-weight="bold">
-                                <tspan x="50%" dy="-0.6em">Self-care itu bukan egois,</tspan>
-                                <tspan x="50%" dy="1.2em">tapi biar gak oleng.</tspan>
-                            </text>
-                        </svg>
-                    </div>
-                    <div class="quote-slide">
-                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="100%" height="100%" fill="#2a2a2a"/>
-                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#e5e5e5" font-size="18" font-family="'Inter', sans-serif">
-                                <tspan x="50%" dy="-0.6em">Kalo burnout itu real,</tspan>
-                                <tspan x="50%" dy="1.2em">istirahat juga harus total.</tspan>
-                            </text>
-                        </svg>
-                    </div>
-                    <div class="quote-slide">
-                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="100%" height="100%" fill="#1e1e1e"/>
-                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#e5e5e5" font-size="20" font-family="'Inter', sans-serif" font-weight="bold">
-                                <tspan x="50%" dy="-0.6em">Self-improvement itu wajib,</tspan>
-                                <tspan x="50%" dy="1.2em">biar gak stuck di situ-situ aja.</tspan>
-                            </text>
-                        </svg>
-                    </div>
-                    <div class="quote-slide">
-                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="100%" height="100%" fill="#fde047"/>
-                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#121212" font-size="20" font-family="'Lexend', sans-serif" font-weight="bold">
-                                <tspan x="50%" dy="-0.6em">Dulu FOMO, sekarang JOMO.</tspan>
-                                <tspan x="50%" dy="1.2em">Enjoy your own pace.</tspan>
-                            </text>
-                        </svg>
-                    </div>
-                    <!-- NEW QUOTES START HERE -->
-                    <div class="quote-slide">
-                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="100%" height="100%" fill="#1e1e1e"/>
-                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#e5e5e5" font-size="20" font-family="'Inter', sans-serif" font-weight="bold">
-                                <tspan x="50%" dy="-0.6em">Santai aja</tspan>
-                                <tspan x="50%" dy="1.2em">gak semua hal harus</tspan>
-                                <tspan x="50%" dy="1.2em">dimengerti saat itu juga.</tspan>
-                            </text>
-                        </svg>
-                    </div>
-                    <div class="quote-slide">
-                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="100%" height="100%" fill="#fde047"/>
-                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#121212" font-size="24" font-family="'Lexend', sans-serif" font-weight="bold">
-                                <tspan x="50%" dy="-0.6em">Ngaku capek itu bukan lemah</tspan>
-                                <tspan x="50%" dy="1.2em">itu upgrade mental.</tspan>
-                            </text>
-                        </svg>
-                    </div>
-                    <div class="quote-slide">
-                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="100%" height="100%" fill="#2a2a2a"/>
-                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#e5e5e5" font-size="20" font-family="'Inter', sans-serif" font-weight="bold">
-                                <tspan x="50%" dy="-0.6em">Reset itu bukan drama</tspan>
-                                <tspan x="50%" dy="1.2em">itu self-care versi jujur.</tspan>
-                            </text>
-                        </svg>
-                    </div>
-                    <div class="quote-slide">
-                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="100%" height="100%" fill="#1e1e1e"/>
-                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#e5e5e5" font-size="20" font-family="'Inter', sans-serif" font-weight="bold">
-                                <tspan x="50%" dy="-0.6em">Ngejar target boleh</tspan>
-                                <tspan x="50%" dy="1.2em">tapi jangan sampai</tspan>
-                                <tspan x="50%" dy="1.2em">kehilangan diri.</tspan>
-                            </text>
-                        </svg>
-                    </div>
-                    <div class="quote-slide">
-                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="100%" height="100%" fill="#fde047"/>
-                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#121212" font-size="20" font-family="'Lexend', sans-serif" font-weight="bold">
-                                <tspan x="50%" dy="-0.6em">Bukan semua hal harus dikejar</tspan>
-                                <tspan x="50%" dy="1.2em">Ada yang cukup lo temukan.</tspan>
-                            </text>
-                        </svg>
-                    </div>
-                    <div class="quote-slide">
-                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="100%" height="100%" fill="#2a2a2a"/>
-                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#e5e5e5" font-size="20" font-family="'Inter', sans-serif" font-weight="bold">
-                                <tspan x="50%" dy="-0.6em">Hidup bukan soal cepat-cepetan</tspan>
-                                <tspan x="50%" dy="1.2em">tapi soal arahnya.</tspan>
-                            </text>
-                        </svg>
-                    </div>
-                    <!-- NEW QUOTES END HERE -->
+                    <!-- Quotes will be dynamically loaded as images here -->
                 </div>
                 <div class="slider-nav">
                     <button id="prevQuote">‹</button>
@@ -1053,13 +927,13 @@
 
         const emailInput = document.getElementById('emailInput'); 
         const submitEmailBtn = document.getElementById('submitEmailBtn'); 
-
+        
         // NEW: Talk to Selfie Elements
         const openTalkToSelfieModalBtn = document.getElementById('openTalkToSelfieModalBtn');
         const talkToSelfieModal = document.getElementById('talkToSelfieModal');
         const chatHistoryDisplay = document.getElementById('chatHistoryDisplay');
         const selfieChatInput = document.getElementById('selfieChatInput');
-        const sendSelfieMessageBtn = document.getElementById('sendSelfieMessageBtn');
+        const sendSelfieMessageBtn = document.getElementById('sendSelfieMessageBtn'); 
         const closeTalkToSelfieModalBtn = document.getElementById('closeTalkToSelfieModalBtn');
         const selfieLoadingIndicator = document.getElementById('selfieLoadingIndicator');
 
@@ -1081,6 +955,34 @@
 
         // Chat history for LLM context
         let chatHistory = [{ role: "model", parts: [{ text: "Halo! Ada yang bisa Selfie bantu?" }] }];
+
+        // --- Quotes Data (Using provided image URLs) ---
+        const quotesData = [
+            {
+                src: "https://i.imghippo.com/files/kmbS3840KWI.png",
+                text: "Rehat itu bukan mager, tapi investasi waras."
+            },
+            {
+                src: "https://i.imghippo.com/files/qUo2107OT.png",
+                text: "Cukup itu mindset, bukan saldo."
+            },
+            {
+                src: "https://i.imghippo.com/files/SnR8669gcQ.png", 
+                text: "Hidup bukan lomba, tiap orang punya pace-nya sendiri."
+            },
+            {
+                src: "https://i.imghippo.com/files/rSS7000wE.png", 
+                text: "Vibes positif? Auto-healing."
+            },
+            {
+                src: "https://i.imghippo.com/files/IHED7806DI.png", 
+                text: "Bukan semua hal harus dikejar Ada yang cukup lo temukan."
+            },
+            {
+                src: "https://i.imghippo.com/files/DZd8455xyA.png", 
+                text: "Kalo burnout itu real, istirahat juga harus total."
+            }
+        ];
 
         // --- Functions ---
 
@@ -1189,13 +1091,13 @@
                 post.innerHTML = `
                     ${confess.text}
                     <div class="actions">
-                        <button class="reaction-btn ${(confess.likes || []).includes(userId) ? 'active' : ''}" data-type="likes" data-id="${confess.id}">
+                        <button class="reaction-btn ${((Array.isArray(confess.likes) ? confess.likes : [])).includes(userId) ? 'active' : ''}" data-type="likes" data-id="${confess.id}">
                             ❤️ <span class="count">${confess.likes?.length || 0}</span>
                         </button>
-                        <button class="reaction-btn ${(confess.loves || []).includes(userId) ? 'active' : ''}" data-type="loves" data-id="${confess.id}">
+                        <button class="reaction-btn ${((Array.isArray(confess.loves) ? confess.loves : [])).includes(userId) ? 'active' : ''}" data-type="loves" data-id="${confess.id}">
                             💖 <span class="count">${confess.loves?.length || 0}</span>
                         </button>
-                        <button class="reaction-btn ${(confess.fires || []).includes(userId) ? 'active' : ''}" data-type="fires" data-id="${confess.id}">
+                        <button class="reaction-btn ${((Array.isArray(confess.fires) ? confess.fires : [])).includes(userId) ? 'active' : ''}" data-type="fires" data-id="${confess.id}">
                             🔥 <span class="count">${confess.fires?.length || 0}</span>
                         </button>
                         <button class="share-confession-btn" data-id="${confess.id}">
@@ -1277,7 +1179,7 @@
                             shareConfession(confess.text); // Pass the text directly
                         });
                     }
-                    // Tombol laporkan dihapus sementara
+                    // Tombol Laporkan dihapus sementara
                     // const reportButton = post.querySelector(`.report-confession-btn`);
                     // if (reportButton) {
                     //     reportButton.addEventListener('click', (e) => {
@@ -1307,7 +1209,7 @@
                         shareButton.style.opacity = '0.5';
                         shareButton.style.cursor = 'not-allowed';
                     }
-                    // Tombol laporkan dihapus sementara
+                    // Tombol Laporkan dihapus sementara
                     // const reportButton = post.querySelector(`.report-confession-btn`);
                     // if (reportButton) {
                     //     reportButton.disabled = true;
@@ -1643,35 +1545,36 @@
         }
 
         /**
-         * Mengunduh gambar quote yang sedang terlihat sebagai file SVG.
+         * Mengunduh gambar quote yang sedang terlihat.
+         * Catatan: Mengunduh gambar dari domain lain (cross-origin) secara langsung melalui JavaScript
+         * bisa jadi rumit karena batasan keamanan browser (CORS).
+         * Untuk placeholder placehold.co, mungkin tidak mengizinkan unduhan langsung.
+         * Pengguna mungkin perlu mengklik kanan dan menyimpan gambar secara manual.
          */
         function downloadCurrentQuote() {
-            // Calculate current slide index based on scroll position
-            const slideWidth = quotesSlider.querySelector('.quote-slide').clientWidth;
-            const currentIndex = Math.round(quotesSlider.scrollLeft / slideWidth);
-            const currentSVG = quotesSlider.querySelectorAll('svg')[currentIndex];
-            
-            if (!currentSVG) {
-                console.error("Tidak ada SVG ditemukan untuk diunduh.");
-                showErrorModal('Tidak ada SVG ditemukan untuk diunduh.');
-                return;
-            }
+            showToast('Untuk mengunduh gambar, silakan klik kanan pada gambar dan pilih "Simpan Gambar Sebagai..."');
+            // Atau, jika Anda memiliki kontrol atas server gambar dan CORS diizinkan:
+            // const slideWidth = quotesSlider.querySelector('.quote-slide').clientWidth;
+            // const currentIndex = Math.round(quotesSlider.scrollLeft / slideWidth);
+            // const currentImageSrc = quotesData[currentIndex].src;
 
-            // Serialize SVG to string
-            const serializer = new XMLSerializer();
-            const svgString = serializer.serializeToString(currentSVG);
-            const blob = new Blob([svgString], {type: "image/svg+xml"});
-            const url = URL.createObjectURL(blob);
-            
-            // Create a temporary anchor element to trigger download
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `selfify_quote_${currentIndex + 1}.svg`; // Suggest a filename
-            document.body.appendChild(a);
-            a.click(); // Programmatically click the link to start download
-            document.body.removeChild(a); // Clean up the temporary link
-            URL.revokeObjectURL(url); // Release the object URL
-            showToast('Gambar diunduh!');
+            // fetch(currentImageSrc)
+            //     .then(response => response.blob())
+            //     .then(blob => {
+            //         const url = URL.createObjectURL(blob);
+            //         const a = document.createElement('a');
+            //         a.href = url;
+            //         a.download = `selfify_quote_${currentIndex + 1}.png`; // Sesuaikan ekstensi jika bukan png
+            //         document.body.appendChild(a);
+            //         a.click();
+            //         document.body.removeChild(a);
+            //         URL.revokeObjectURL(url);
+            //         showToast('Gambar diunduh!');
+            //     })
+            //     .catch(error => {
+            //         console.error('Error downloading image:', error);
+            //         showErrorModal('Gagal mengunduh gambar. Pastikan gambar dapat diakses atau coba cara manual.');
+            //     });
         }
 
         /**
@@ -1680,38 +1583,24 @@
         async function shareCurrentQuote() {
             const slideWidth = quotesSlider.querySelector('.quote-slide').clientWidth;
             const currentIndex = Math.round(quotesSlider.scrollLeft / slideWidth);
-            const currentSVG = quotesSlider.querySelectorAll('svg')[currentIndex];
-
-            if (!currentSVG) {
-                console.error("Tidak ada SVG ditemukan untuk menyalin teks.");
-                showErrorModal('Tidak ada SVG ditemukan untuk menyalin teks.');
-                return;
-            }
-
-            // Extract text content from the SVG's <text> elements
-            let quoteText = '';
-            currentSVG.querySelectorAll('tspan').forEach(tspan => {
-                quoteText += tspan.textContent + '\n';
-            });
-            quoteText = quoteText.trim(); // Remove trailing newline
+            const currentQuoteText = quotesData[currentIndex].text; // Ambil teks dari array data
 
             if (navigator.share) {
                 try {
                     await navigator.share({
                         title: 'Manifesto Selfify',
-                        text: quoteText,
+                        text: currentQuoteText,
                         url: window.location.href 
                     });
                     showToast('Quote berhasil dibagikan!');
                 } catch (error) {
                     console.error('Error sharing:', error);
                     // Fallback to copy if Web Share API fails or not supported
-                    copyTextToClipboard(quoteText);
+                    copyTextToClipboard(currentQuoteText);
                     showToast('Teks quote disalin!');
                 }
             } else {
-                // Fallback to copy if Web Share API not supported
-                copyTextToClipboard(quoteText);
+                copyTextToClipboard(currentQuoteText);
                 showToast('Teks quote disalin!');
             }
         }
@@ -1730,13 +1619,38 @@
         }
 
         /**
-         * Mengatur tampilan awal slider quotes.
+         * Mengatur tampilan awal slider quotes dan memuat gambar.
          */
-        function setupQuotesSlider() {
-            if (quotesSlider) {
-                quotesSlider.scrollLeft = 0; 
+        async function setupQuotesSlider() {
+            if (!quotesSlider) {
+                console.error("quotesSlider element not found!");
+                return;
             }
+
+            quotesSlider.innerHTML = ''; // Clear existing content
+            // No global loading here, as images are loaded directly by browser from 'uploaded:' path
+
+            quotesData.forEach((quote, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'quote-slide';
+                const img = document.createElement('img');
+                img.src = quote.src; // Directly use the 'uploaded:' path or Base64
+                img.alt = quote.text; // Alt text for accessibility
+                img.onload = () => console.log(`Quote image ${index + 1} loaded successfully: ${quote.src}`);
+                img.onerror = function() { 
+                    console.error(`Failed to load quote image ${index + 1}: ${this.src}. Using fallback.`);
+                    this.onerror=null;
+                    this.src="https://placehold.co/300x300/cccccc/000000?text=Gambar+Rusak";
+                    this.alt="Gambar quote tidak dapat dimuat.";
+                };
+                slide.appendChild(img);
+                quotesSlider.appendChild(slide);
+            });
+
+            quotesSlider.scrollLeft = 0; 
+            // No hideGlobalLoading here, as it's not shown specifically for quotes loading anymore.
         }
+
 
         /**
          * Mengirim pesan ke model bahasa besar (LLM) dan menampilkan responsnya.
@@ -2072,19 +1986,24 @@
                         hideGlobalLoading(); // Pastikan loading disembunyikan jika ada error autentikasi
                     }
                 }
+                // Always setup quotes slider after auth state is determined,
+                // as it might use global loading which depends on body.modal-open state.
+                setupQuotesSlider();
             });
         } else {
             console.error("Firebase Auth not initialized. Skipping authentication listener.");
             // Jika auth tidak terinisialisasi, pastikan loading disembunyikan
             document.addEventListener('DOMContentLoaded', () => {
                 hideGlobalLoading();
+                setupQuotesSlider(); // Still try to load quotes if auth is not ready
             });
         }
 
         // Ensure the initial render of the slider is correct on DOMContentLoaded
-        document.addEventListener('DOMContentLoaded', () => {
-            setupQuotesSlider();
-        });
+        // This is now handled within the onAuthStateChanged callback to ensure correct loading state.
+        // document.addEventListener('DOMContentLoaded', () => {
+        //     setupQuotesSlider();
+        // });
 
     </script>
 </body>
