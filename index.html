@@ -45,7 +45,8 @@
             padding: 40px 16px;
             text-align: center;
             display: flex;
-            justify-content: center;
+            flex-direction: column; /* Changed to column to stack content */
+            justify-content: flex-start; /* Align content to the top */
             align-items: center;
             min-height: 100vh;
             box-sizing: border-box;
@@ -74,11 +75,13 @@
         }
 
         .poem {
-            font-style: italic;
+            /* REVISED STYLING FOR "TEGAS" */
+            font-style: normal; /* Removed italic */
             color: var(--secondary-text-color);
-            line-height: 1.5; /* Adjusted line height for more compact spacing */
+            line-height: 1.6; /* Adjusted line height for readability */
             margin-bottom: 32px;
-            font-size: 14px; /* Readable font size */
+            font-size: 16px; /* Slightly larger font size */
+            font-weight: bold; /* Made the font bold */
             white-space: pre-line; /* Preserves line breaks from HTML */
             padding: 0 8px; /* Added slight horizontal padding to prevent text from touching edges */
         }
@@ -104,11 +107,13 @@
             max-height: 320px; /* Max height for scrolling */
             overflow-y: auto;
             padding: 8px;
+            padding-bottom: 50px; /* Adjusted padding to make space for sticky button and cover content */
             margin-bottom: 32px;
             border: 1px solid var(--border-color);
             /* Hide scrollbar for this specific section */
             scrollbar-width: none; /* Firefox */
             -ms-overflow-style: none;  /* IE and Edge */
+            position: relative; /* Needed for sticky positioning of child */
         }
         .confess-list::-webkit-scrollbar {
             display: none; /* Chrome, Safari, Opera*/
@@ -122,6 +127,7 @@
             text-align: left;
             border: 1px solid transparent;
             transition: all 0.3s ease;
+            margin-bottom: 16px; /* Added margin for spacing between posts */
         }
         .confess-post:hover {
             transform: translateY(-3px);
@@ -142,13 +148,111 @@
             align-items: center;
             gap: 6px;
         }
+        .actions button {
+            background: none;
+            border: none;
+            color: var(--secondary-text-color);
+            cursor: pointer;
+            padding: 4px 8px; /* Adjusted padding for reaction buttons */
+            border-radius: 8px;
+            transition: background 0.2s ease, color 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .actions button:hover {
+            background: rgba(253, 224, 71, 0.1); /* Subtle hover background */
+            color: var(--primary-color);
+        }
+        .actions button.active { /* Style for active reaction */
+            color: var(--primary-color);
+            background: rgba(253, 224, 71, 0.2);
+        }
+        .actions button svg {
+            width: 16px;
+            height: 16px;
+        }
 
+        /* Comment Section Styles */
+        .comments-section {
+            margin-top: 20px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+        }
+        .comments-list {
+            max-height: 150px; /* Max height for comments list */
+            overflow-y: auto;
+            margin-bottom: 10px;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;  /* IE and Edge */
+        }
+        .comments-list::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera*/
+        }
+        .comment-item {
+            background: var(--background-color);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: var(--primary-text-color);
+            text-align: left;
+        }
+        .comment-item strong {
+            color: var(--primary-color);
+            margin-right: 5px;
+        }
+        .comment-input-wrapper {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .comment-input-wrapper input {
+            flex-grow: 1;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--background-color);
+            color: var(--primary-text-color);
+            font-size: 14px;
+        }
+        .comment-input-wrapper button {
+            width: auto; /* Override 100% width from general button style */
+            padding: 8px 15px;
+            font-size: 14px;
+            border-radius: 8px;
+        }
+        .comment-input-wrapper input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(253, 224, 71, 0.2);
+        }
+        .comment-char-count {
+            font-size: 12px;
+            color: var(--secondary-text-color);
+            text-align: right;
+            margin-top: 4px;
+        }
+        .comment-char-count.warning {
+            color: red;
+        }
+
+        /* Confess form now sticky inside confess-list */
         .confess-form {
             background: var(--surface-color);
-            padding: 24px;
-            border-radius: 16px;
+            padding: 10px; /* Adjusted padding to make it tighter */
+            border-radius: 16px; /* Keep top radius */
+            border-bottom-left-radius: 16px; /* Match list bottom radius */
+            border-bottom-right-radius: 16px; /* Match list bottom radius */
             border: 1px solid var(--border-color);
-            margin-bottom: 32px;
+            border-top: 1px solid var(--border-color); /* Add top border to separate from posts */
+            margin-bottom: 0; /* Remove margin as it's sticky */
+            position: sticky; /* Make it stick */
+            bottom: 0; /* Stick to the bottom of its parent scroll container */
+            z-index: 10; /* Ensure it's above scrolling posts */
+            box-sizing: border-box; /* Include padding and border in element's total width and height */
+            width: calc(100% - 16px); /* Adjust width to fit inside confess-list padding */
+            left: 8px; /* Align with left padding of confess-list */
         }
 
         button {
@@ -409,27 +513,132 @@
             visibility: visible;
         }
 
+        /* Talk to Selfie specific styles */
+        .talk-to-selfie-modal-content {
+            max-width: 500px; /* Slightly wider for chat */
+            height: 80vh; /* Take more vertical space */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .chat-history {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background: var(--background-color);
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;  /* IE and Edge */
+        }
+        .chat-history::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera*/
+        }
+
+        .chat-message {
+            padding: 8px 12px;
+            border-radius: 12px;
+            max-width: 85%;
+        }
+
+        .chat-message.user {
+            background: #4a4a4a;
+            color: var(--primary-text-color);
+            align-self: flex-end; /* Align to right */
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-message.selfie {
+            background: var(--primary-color);
+            color: #111;
+            align-self: flex-start; /* Align to left */
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input-wrapper input {
+            flex-grow: 1;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background: var(--background-color);
+            color: var(--primary-text-color);
+            font-size: 16px;
+        }
+        .chat-input-wrapper input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(253, 224, 71, 0.2);
+        }
+
+        .chat-input-wrapper button {
+            width: auto;
+            padding: 12px 20px;
+            font-size: 16px;
+        }
+        .loading-indicator {
+            text-align: center;
+            margin-top: 10px;
+            font-style: italic;
+            color: var(--secondary-text-color);
+        }
+
+        /* Floating Action Button (FAB) styles */
+        .floating-action-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: var(--primary-color);
+            color: #111; /* Dark text for yellow background */
+            border: none;
+            border-radius: 50%; /* Make it circular */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4); /* Subtle shadow for floating effect */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px; /* Large emoji size */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 999; /* Ensure it's above other content */
+            font-family: 'Inter', sans-serif; /* Use Inter for emoji */
+            font-weight: normal; /* Reset font weight */
+        }
+
+        .floating-action-button:hover {
+            background: #ffc107;
+            transform: translateY(-3px) scale(1.05); /* Slight lift and scale on hover */
+            box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+        }
+
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Manifesto Selfify</h2>
         <div class="poem">
-            Ketika Dunia makin berisik, orang makin toxic
-            dan Sosmed? Udah gak asik. <br/>
-            Dan lo... ngerasa lost, stuck,
-            lelah banget ngejar validasi? <br/>
+            Sekarang Dunia makin berisik, orang makin toxic
+            dan Sosmed? Udah gak asik.
+
             Kalau hati lo gak terusik, 
-            Mungkin lo beneran lagi sakit. <br/>
-            Tapi dengerin— <br/>
-            Lo berhak ngerem, tarik napas
-            Diem sebentar. <br/>
-            Istirahat itu bukan tanda lemah,
-            itu bentuk sadar. <br/>
-            Biar bisa balik lagi...
-            Lebih kuat. Lebih jujur. Lebih tumbuh. <br/>
-            <span style="color: var(--primary-color); font-weight: bold;">"Selfify.id bukan tempat buat kabur,
-            tapi tempat lo pulang ke diri lo sendiri."</span></br>
+            Mungkin lo beneran lagi sakit.
+
+            Dan ketika elo Lelah ngejar validasi?
+
+            <span style="color: var(--primary-color);">"Selfify hadir bukan buat pelarian,
+            tapi tempat lo pulang ke diri lo sendiri."</span>
+
             Karena hidup gak cuma buat dilewatin
             tapi dijalanin dengan arah & makna.
         </div>
@@ -533,18 +742,22 @@
         <div class="confess-list" id="confessList">
             <!-- Posts are dynamically added -->
             <div id="loadingMessage" style="color: var(--secondary-text-color); padding: 20px;">Memuat pengakuan...</div>
-        </div>
-
-        <div class="confess-form">
-            <button id="openConfessModalBtn">Curhat? Confess? Boleh banget.</button>
+            
+            <!-- Confess form now sticky inside confess-list -->
+            <div class="confess-form">
+                <button id="openConfessModalBtn">Curhat? Confess? Boleh banget.</button>
+            </div>
         </div>
 
         <div class="email-section">
             <p>Drop email lo, and let’s be part of the first <b style="color: var(--primary-color);">Selfify</b> circle. We’ve got cool features yang gak cuman keren, tapi juga super relatable—tailored just for you.</p>
-            <input type="email" placeholder="you@email.com" />
-            <button>Kirim 🔔</button>
+            <input type="email" id="emailInput" placeholder="you@email.com" />
+            <button id="submitEmailBtn">Kirim 🔔</button>
         </div>
     </div>
+
+    <!-- Floating Talk to Selfie Button -->
+    <button id="openTalkToSelfieModalBtn" class="floating-action-button">🤖</button>
 
     <!-- Custom Modal for New Confession -->
     <div class="modal-overlay" id="confessModal">
@@ -580,23 +793,35 @@
         </div>
     </div>
 
+    <!-- Talk to Selfie Modal -->
+    <div class="modal-overlay" id="talkToSelfieModal">
+        <div class="modal-content talk-to-selfie-modal-content">
+            <h3>Talk to Selfie 🤖</h3>
+            <div class="chat-history" id="chatHistoryDisplay">
+                <!-- Chat messages will be appended here -->
+                <div class="chat-message selfie">Halo! Ada yang bisa Selfie bantu?</div>
+            </div>
+            <div class="loading-indicator" id="selfieLoadingIndicator" style="display: none;">Selfie sedang berpikir...</div>
+            <div class="chat-input-wrapper">
+                <input type="text" id="selfieChatInput" placeholder="Ketik pesanmu di sini..." />
+                <button id="sendSelfieMessageBtn">Kirim</button>
+            </div>
+            <div class="modal-actions" style="margin-top: 15px;">
+                <button id="closeTalkToSelfieModalBtn" style="background: #444;">Tutup</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, onSnapshot, serverTimestamp, doc, updateDoc, arrayUnion, arrayRemove, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Firebase Configuration (DO NOT EDIT)
         // These variables are provided by the Canvas environment.
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = {
-  apiKey: "AIzaSyBjaZ6QLUX-LzAPjyPRBHQNYNh1ZkAV_gk",
-  authDomain: "selfifyid-4d06c.firebaseapp.com",
-  projectId: "selfifyid-4d06c",
-  storageBucket: "selfifyid-4d06c.firebasestorage.app",
-  messagingSenderId: "583104647123",
-  appId: "1:583104647123:web:7abd11dc720165dfa9e926"
-};
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         // Initialize Firebase
@@ -604,7 +829,7 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        let userId = null; // To store the authenticated user ID
+        let userId = null; // Untuk menyimpan ID pengguna yang terautentikasi
 
         // --- DOM Elements ---
         const confessList = document.getElementById('confessList');
@@ -613,7 +838,7 @@
         const openConfessModalBtn = document.getElementById('openConfessModalBtn');
         const confessModal = document.getElementById('confessModal');
         const successModal = document.getElementById('successModal');
-        const errorModal = document.getElementById('errorModal'); // New error modal
+        const errorModal = document.getElementById('errorModal'); 
         
         const modalConfessText = document.getElementById('modalConfessText');
         const modalAlterName = document.getElementById('modalAlterName');
@@ -621,8 +846,8 @@
         const submitConfessBtn = document.getElementById('submitConfess');
         const cancelConfessBtn = document.getElementById('cancelConfess');
         const closeSuccessBtn = document.getElementById('closeSuccessModal');
-        const closeErrorBtn = document.getElementById('closeErrorModal'); // New close error button
-        const errorMessageDisplay = document.getElementById('errorMessage'); // Element to display error message
+        const closeErrorBtn = document.getElementById('closeErrorModal'); 
+        const errorMessageDisplay = document.getElementById('errorMessage'); 
 
         const quotesSlider = document.getElementById('quotesSlider');
         const prevQuoteBtn = document.getElementById('prevQuote');
@@ -630,60 +855,346 @@
         const shareQuoteBtn = document.getElementById('shareQuoteBtn');
         const downloadQuoteBtn = document.getElementById('downloadQuoteBtn');
 
+        const emailInput = document.getElementById('emailInput'); 
+        const submitEmailBtn = document.getElementById('submitEmailBtn'); 
+
+        // NEW: Talk to Selfie Elements
+        const openTalkToSelfieModalBtn = document.getElementById('openTalkToSelfieModalBtn');
+        const talkToSelfieModal = document.getElementById('talkToSelfieModal');
+        const chatHistoryDisplay = document.getElementById('chatHistoryDisplay');
+        const selfieChatInput = document.getElementById('selfieChatInput');
+        const sendSelfieMessageBtn = document.getElementById('sendSelfieMessageBtn');
+        const closeTalkToSelfieModalBtn = document.getElementById('closeTalkToSelfieModalBtn');
+        const selfieLoadingIndicator = document.getElementById('selfieLoadingIndicator');
+
+        // Chat history for LLM context
+        let chatHistory = [{ role: "model", parts: [{ text: "Halo! Ada yang bisa Selfie bantu?" }] }];
+
         // --- Functions ---
 
         /**
-         * Shows a modal by adding the 'show' class and prevents body scrolling.
-         * @param {HTMLElement} modalElement - The modal element to show.
+         * Menampilkan modal dengan menambahkan kelas 'show' dan mencegah body scrolling.
+         * @param {HTMLElement} modalElement - Elemen modal yang akan ditampilkan.
          */
         function showModal(modalElement) {
             modalElement.classList.add('show');
-            document.body.classList.add('modal-open'); // Add class to body to prevent scrolling
+            document.body.classList.add('modal-open'); 
         }
 
         /**
-         * Hides a modal by removing the 'show' class and re-enables body scrolling.
-         * @param {HTMLElement} modalElement - The modal element to hide.
+         * Menyembunyikan modal dengan menghapus kelas 'show' dan mengaktifkan kembali body scrolling.
+         * @param {HTMLElement} modalElement - Elemen modal yang akan disembunyikan.
          */
         function hideModal(modalElement) {
             modalElement.classList.remove('show');
-            document.body.classList.remove('modal-open'); // Remove class from body to re-enable scrolling
+            document.body.classList.remove('modal-open'); 
         }
 
         /**
-         * Renders the list of confessions to the DOM.
-         * Clears existing list items and appends new ones from the provided array.
-         * @param {Array<Object>} confessionsData - An array of confession objects.
+         * Menampilkan pesan toast sementara.
+         * @param {string} message - Pesan yang akan ditampilkan.
+         */
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast-message';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10); 
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+            }, 2000); 
+        }
+
+        /**
+         * Merender daftar pengakuan ke DOM, termasuk reaksi dan komentar.
+         * @param {Array<Object>} confessionsData - Array objek pengakuan.
          */
         function renderConfessions(confessionsData) {
-            confessList.innerHTML = ''; // Clear existing list
-            if (confessionsData.length === 0) {
-                confessList.innerHTML = '<div style="color: var(--secondary-text-color); padding: 20px;">Belum ada pengakuan. Jadilah yang pertama!</div>';
-                return;
-            }
+            // Store the current scroll position
+            const currentScrollTop = confessList.scrollTop;
+            const isScrolledToBottom = confessList.scrollHeight - confessList.clientHeight <= currentScrollTop + 1; // +1 for tolerance
 
-            confessionsData.forEach((confess) => {
+            confessList.innerHTML = ''; 
+
+            // --- Add dummy confessions for visualization ---
+            const dummyConfessions = [
+                {
+                    id: 'dummy1',
+                    text: 'Pengakuan dummy pertama: Aku sering merasa tidak cukup baik, meskipun sudah berusaha keras.',
+                    alterName: 'ShadowSelf',
+                    likes: [], loves: [], fires: [],
+                    timestamp: new Date(Date.now() - 3600000) // 1 hour ago
+                },
+                {
+                    id: 'dummy2',
+                    text: 'Pengakuan dummy kedua: Sulit sekali untuk jujur pada diri sendiri tentang apa yang sebenarnya aku inginkan.',
+                    alterName: 'InnerVoice',
+                    likes: [], loves: [], fires: [],
+                    timestamp: new Date(Date.now() - 7200000) // 2 hours ago
+                },
+                {
+                    id: 'dummy3',
+                    text: 'Pengakuan dummy ketiga: Kadang aku hanya ingin menghilang dari semua tekanan ini.',
+                    alterName: 'QuietSoul',
+                    likes: [], loves: [], fires: [],
+                    timestamp: new Date(Date.now() - 10800000) // 3 hours ago
+                }
+            ];
+            // Combine dummy data with actual fetched data
+            const allConfessions = [...dummyConfessions, ...confessionsData];
+
+            // Add posts first, excluding the sticky form
+            allConfessions.forEach((confess) => {
                 const post = document.createElement('div');
                 post.className = 'confess-post';
+                post.dataset.id = confess.id; 
                 post.innerHTML = `
                     ${confess.text}
                     <div class="actions">
-                        <span>❤️ ${confess.likes || 0}</span>
-                        <span>🔥 ${confess.fires || 0}</span>
-                        <span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M4.715 6.542 3.343 7.914a.5.5 0 0 0 .707.707l1.414-1.414a.5.5 0 0 0-.707-.707m-1.414 0L2 6.542a.5.5 0 0 0-.707.707l1.414 1.414a.5.5 0 0 0 .707-.707m6.428 2.122a.5.5 0 0 0 .707-.707L11.086 7.914a.5.5 0 1 0-.707.707l1.414 1.414zm.707-2.122L12.5 7.914a.5.5 0 0 0 .707.707l1.414-1.414a.5.5 0 0 0-.707-.707M10 13a1 1 0 0 1-1-1v-2.5a.5.5 0 0 0-1 0V12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.5a1 1 0 0 1 1 1v1.5a.5.5 0 0 0 1 0V6a1 1 0 0 1 1-1H12a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-2z"/></svg>
-                            Share
-                        </span>
+                        <button class="reaction-btn ${confess.likes?.includes(userId) ? 'active' : ''}" data-type="likes" data-id="${confess.id}">
+                            ❤️ <span class="count">${confess.likes?.length || 0}</span>
+                        </button>
+                        <button class="reaction-btn ${confess.loves?.includes(userId) ? 'active' : ''}" data-type="loves" data-id="${confess.id}">
+                            💖 <span class="count">${confess.loves?.length || 0}</span>
+                        </button>
+                        <button class="reaction-btn ${confess.fires?.includes(userId) ? 'active' : ''}" data-type="fires" data-id="${confess.id}">
+                            🔥 <span class="count">${confess.fires?.length || 0}</span>
+                        </button>
+                    </div>
+                    <div class="comments-section">
+                        <h4>Komentar:</h4>
+                        <div class="comments-list" id="comments-list-${confess.id}">
+                            <!-- Komentar akan dimuat secara dinamis di sini -->
+                            <div style="color: var(--secondary-text-color); font-size: 12px; text-align: center; padding: 10px;">Memuat komentar...</div>
+                        </div>
+                        <div class="comment-input-wrapper">
+                            <input type="text" id="comment-input-${confess.id}" placeholder="Tulis komentar (max 250 karakter)" maxlength="250">
+                            <button class="submit-comment-btn" data-id="${confess.id}">Kirim</button>
+                        </div>
+                        <div class="comment-char-count" id="comment-char-count-${confess.id}">0/250</div>
                     </div>
                 `;
                 confessList.appendChild(post);
+
+                // Setup event listeners for reaction buttons
+                post.querySelectorAll('.reaction-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const confessionId = e.currentTarget.dataset.id;
+                        const reactionType = e.currentTarget.dataset.type;
+                        toggleReaction(confessionId, reactionType);
+                    });
+                });
+
+                // Setup event listener for comment submission
+                post.querySelector(`.submit-comment-btn`).addEventListener('click', (e) => {
+                    const confessionId = e.currentTarget.dataset.id;
+                    submitComment(confessionId);
+                });
+
+                // Setup character count for comment input
+                const commentInput = post.querySelector(`#comment-input-${confess.id}`);
+                const charCountDisplay = post.querySelector(`#comment-char-count-${confess.id}`);
+                commentInput.addEventListener('input', () => {
+                    const currentLength = commentInput.value.length;
+                    charCountDisplay.textContent = `${currentLength}/250`;
+                    if (currentLength >= 240) { 
+                        charCountDisplay.classList.add('warning');
+                    } else {
+                        charCountDisplay.classList.remove('warning');
+                    }
+                });
+
+                // Setup real-time listener for comments on this specific post
+                // Only setup listener for actual Firestore posts, not dummies
+                if (!confess.id.startsWith('dummy')) {
+                    setupCommentsListener(confess.id);
+                } else {
+                    // For dummy posts, just show "No comments" initially
+                    const commentsListElement = document.getElementById(`comments-list-${confess.id}`);
+                    if (commentsListElement) {
+                        commentsListElement.innerHTML = '<div style="color: var(--secondary-text-color); font-size: 12px; text-align: center; padding: 10px;">Belum ada komentar.</div>';
+                    }
+                }
             });
-            // Auto-scroll to the bottom when new confessions are rendered
-            confessList.scrollTop = confessList.scrollHeight;
+
+            // Add the sticky form after all posts
+            const stickyFormHtml = `
+                <div class="confess-form">
+                    <button id="openConfessModalBtn">Curhat? Confess? Boleh banget.</button>
+                </div>
+            `;
+            confessList.insertAdjacentHTML('beforeend', stickyFormHtml);
+
+            // Re-attach event listener for the sticky button
+            const newOpenConfessModalBtn = confessList.querySelector('#openConfessModalBtn');
+            if (newOpenConfessModalBtn) {
+                newOpenConfessModalBtn.addEventListener('click', () => {
+                    showModal(confessModal);
+                });
+            }
+
+            if (allConfessions.length === 0) { // Check against allConfessions, including dummies
+                confessList.innerHTML = '<div style="color: var(--secondary-text-color); padding: 20px;">Belum ada pengakuan. Jadilah yang pertama!</div>' + stickyFormHtml;
+            }
+
+            // Restore scroll position or scroll to bottom if it was already there
+            if (isScrolledToBottom) {
+                confessList.scrollTop = confessList.scrollHeight;
+            } else {
+                confessList.scrollTop = currentScrollTop;
+            }
         }
 
         /**
-         * Fetches confessions from Firestore and sets up a real-time listener.
+         * Mengelola penambahan atau penghapusan reaksi (like, love, fire) pada pengakuan.
+         * @param {string} confessionId - ID dokumen pengakuan.
+         * @param {string} reactionType - Tipe reaksi ('likes', 'loves', 'fires').
+         */
+        async function toggleReaction(confessionId, reactionType) {
+            if (!userId) {
+                showErrorModal('Anda perlu login untuk memberikan reaksi.');
+                return;
+            }
+            if (confessionId.startsWith('dummy')) {
+                showToast('Tidak bisa bereaksi pada pengakuan dummy.');
+                return;
+            }
+
+            const confessionRef = doc(db, `artifacts/${appId}/public/data/confessions`, confessionId);
+            try {
+                const docSnap = await getDoc(confessionRef);
+                if (docSnap.exists()) {
+                    const currentReactions = docSnap.data()[reactionType] || [];
+                    if (currentReactions.includes(userId)) {
+                        // Jika sudah ada, hapus reaksi
+                        await updateDoc(confessionRef, {
+                            [reactionType]: arrayRemove(userId)
+                        });
+                    } else {
+                        // Jika belum ada, tambahkan reaksi
+                        // Pertama, hapus reaksi lain dari pengguna ini untuk memastikan hanya 1 opsi
+                        const allReactionTypes = ['likes', 'loves', 'fires'];
+                        for (const type of allReactionTypes) {
+                            if (type !== reactionType) {
+                                const otherReactions = docSnap.data()[type] || [];
+                                if (otherReactions.includes(userId)) {
+                                    await updateDoc(confessionRef, {
+                                        [type]: arrayRemove(userId)
+                                    });
+                                }
+                            }
+                        }
+                        // Kemudian, tambahkan reaksi yang dipilih
+                        await updateDoc(confessionRef, {
+                            [reactionType]: arrayUnion(userId)
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error(`Error toggling ${reactionType}:`, error);
+                showErrorModal(`Gagal memberikan reaksi. Silakan coba lagi.`);
+            }
+        }
+
+        /**
+         * Merender daftar komentar untuk pengakuan tertentu.
+         * @param {string} confessionId - ID dokumen pengakuan.
+         * @param {Array<Object>} commentsData - Array objek komentar.
+         */
+        function renderComments(confessionId, commentsData) {
+            const commentsListElement = document.getElementById(`comments-list-${confessionId}`);
+            if (!commentsListElement) return;
+
+            commentsListElement.innerHTML = ''; 
+            if (commentsData.length === 0) {
+                commentsListElement.innerHTML = '<div style="color: var(--secondary-text-color); font-size: 12px; text-align: center; padding: 10px;">Belum ada komentar.</div>';
+                return;
+            }
+
+            commentsData.forEach(comment => {
+                const commentItem = document.createElement('div');
+                commentItem.className = 'comment-item';
+                commentItem.innerHTML = `<strong>${comment.alterName || 'Anonim'}:</strong> ${comment.text}`;
+                commentsListElement.appendChild(commentItem);
+            });
+            commentsListElement.scrollTop = commentsListElement.scrollHeight; 
+        }
+
+        /**
+         * Menyiapkan listener real-time untuk komentar pada pengakuan tertentu.
+         * @param {string} confessionId - ID dokumen pengakuan.
+         */
+        function setupCommentsListener(confessionId) {
+            const commentsCollectionRef = collection(db, `artifacts/${appId}/public/data/confessions/${confessionId}/comments`);
+            const q = query(commentsCollectionRef); 
+
+            onSnapshot(q, (snapshot) => {
+                const fetchedComments = [];
+                snapshot.forEach((doc) => {
+                    fetchedComments.push({ id: doc.id, ...doc.data() });
+                });
+                fetchedComments.sort((a, b) => (a.timestamp?.toDate() || 0) - (b.timestamp?.toDate() || 0));
+                renderComments(confessionId, fetchedComments);
+            }, (error) => {
+                console.error(`Error fetching comments for ${confessionId}:`, error);
+                const commentsListElement = document.getElementById(`comments-list-${confessionId}`);
+                if (commentsListElement) {
+                    commentsListElement.innerHTML = '<div style="color: red; font-size: 12px; text-align: center; padding: 10px;">Gagal memuat komentar.</div>';
+                }
+            });
+        }
+
+        /**
+         * Mengirimkan komentar baru ke Firestore.
+         * @param {string} confessionId - ID dokumen pengakuan.
+         */
+        async function submitComment(confessionId) {
+            if (!userId) {
+                showErrorModal('Anda perlu login untuk mengirim komentar.');
+                return;
+            }
+            if (confessionId.startsWith('dummy')) {
+                showToast('Tidak bisa mengirim komentar pada pengakuan dummy.');
+                return;
+            }
+
+            const commentInput = document.getElementById(`comment-input-${confessionId}`);
+            const commentText = commentInput.value.trim();
+            const COMMENT_MAX_LENGTH = 250;
+
+            if (commentText.length === 0) {
+                commentInput.style.borderColor = 'red';
+                setTimeout(() => { commentInput.style.borderColor = 'var(--border-color)'; }, 1500);
+                return;
+            }
+            if (commentText.length > COMMENT_MAX_LENGTH) {
+                showErrorModal(`Komentar terlalu panjang. Maksimal ${COMMENT_MAX_LENGTH} karakter.`);
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, `artifacts/${appId}/public/data/confessions/${confessionId}/comments`), {
+                    text: commentText,
+                    alterName: "Anonim", 
+                    timestamp: serverTimestamp(),
+                    userId: userId
+                });
+                commentInput.value = ''; 
+                showToast('Komentar terkirim!');
+            } catch (error) {
+                console.error("Error adding comment: ", error);
+                showErrorModal('Terjadi kesalahan saat mengirim komentar. Silakan coba lagi.');
+            }
+        }
+
+
+        /**
+         * Menyiapkan listener real-time untuk pengakuan dari Firestore.
          */
         function setupConfessionsListener() {
             if (!db) {
@@ -695,15 +1206,13 @@
             const confessionsCollectionRef = collection(db, `artifacts/${appId}/public/data/confessions`);
             
             // Create a query to order confessions by creation date (newest first)
-            // Note: orderBy() can lead to index missing errors if not handled in Firestore rules/indexes.
-            // For simplicity, we'll fetch and sort in memory if orderBy causes issues.
-            const q = query(confessionsCollectionRef); // Removed orderBy for broader compatibility
+            const q = query(confessionsCollectionRef); 
 
             // Set up a real-time listener
             onSnapshot(q, (snapshot) => {
                 const fetchedConfessions = [];
                 snapshot.forEach((doc) => {
-                    fetchedConfessions.push(doc.data());
+                    fetchedConfessions.push({ id: doc.id, ...doc.data() }); // Include doc.id
                 });
                 // Sort by timestamp in descending order (newest first) in memory
                 fetchedConfessions.sort((a, b) => (b.timestamp?.toDate() || 0) - (a.timestamp?.toDate() || 0));
@@ -717,7 +1226,7 @@
         }
 
         /**
-         * Handles the submission of a new confession to Firestore.
+         * Menangani pengiriman pengakuan baru ke Firestore.
          */
         async function submitConfession() {
             const text = modalConfessText.value.trim();
@@ -752,8 +1261,9 @@
                 await addDoc(collection(db, `artifacts/${appId}/public/data/confessions`), {
                     text: text,
                     alterName: alter,
-                    likes: 0,
-                    fires: 0,
+                    likes: [], // Initialize as empty array for user IDs
+                    loves: [], // Initialize as empty array for user IDs
+                    fires: [], // Initialize as empty array for user IDs
                     timestamp: serverTimestamp(), // Use server timestamp for consistent ordering
                     userId: userId // Store the user ID who made the confession
                 });
@@ -773,8 +1283,8 @@
         }
 
         /**
-         * Displays an error modal with a specific message.
-         * @param {string} message - The error message to display.
+         * Menampilkan modal error dengan pesan tertentu.
+         * @param {string} message - Pesan error yang akan ditampilkan.
          */
         function showErrorModal(message) {
             errorMessageDisplay.textContent = message;
@@ -782,7 +1292,45 @@
         }
 
         /**
-         * Downloads the currently visible SVG quote as an SVG file.
+         * Menangani pengiriman email (placeholder untuk Netlify Function).
+         */
+        async function submitEmail() {
+            const email = emailInput.value.trim();
+            if (!email) {
+                emailInput.style.borderColor = 'red';
+                setTimeout(() => { emailInput.style.borderColor = 'var(--border-color)'; }, 1500);
+                showErrorModal('Email tidak boleh kosong.');
+                return;
+            }
+
+            // --- Placeholder untuk pemanggilan Netlify Function ---
+            // Nanti di sini akan ada kode untuk memanggil Netlify Function
+            // yang akan mengirim email notifikasi ke admin.
+            // Contoh:
+            /*
+            try {
+                const response = await fetch('/.netlify/functions/notify-admin-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, userId: userId })
+                });
+                if (!response.ok) {
+                    throw new Error('Gagal mengirim notifikasi email.');
+                }
+                showToast('Email Anda telah terdaftar!');
+                emailInput.value = ''; // Kosongkan input setelah sukses
+            } catch (error) {
+                console.error("Error submitting email:", error);
+                showErrorModal('Gagal mendaftarkan email Anda. Silakan coba lagi.');
+            }
+            */
+            // Untuk saat ini, kita akan langsung mengosongkan input dan menampilkan pesan sukses
+            showToast('Email Anda telah terdaftar! (Notifikasi admin akan aktif setelah Netlify Function dikonfigurasi)');
+            emailInput.value = ''; // Kosongkan input setelah sukses
+        }
+
+        /**
+         * Mengunduh gambar quote yang sedang terlihat sebagai file SVG.
          */
         function downloadCurrentQuote() {
             // Calculate current slide index based on scroll position
@@ -791,7 +1339,8 @@
             const currentSVG = quotesSlider.querySelectorAll('svg')[currentIndex];
             
             if (!currentSVG) {
-                console.error("No SVG found to download.");
+                console.error("Tidak ada SVG ditemukan untuk diunduh.");
+                showErrorModal('Tidak ada SVG ditemukan untuk diunduh.');
                 return;
             }
 
@@ -804,23 +1353,25 @@
             // Create a temporary anchor element to trigger download
             const a = document.createElement('a');
             a.href = url;
-            a.download = `quote-${currentIndex + 1}.svg`; // Suggest a filename
+            a.download = `selfify_quote_${currentIndex + 1}.svg`; // Suggest a filename
             document.body.appendChild(a);
             a.click(); // Programmatically click the link to start download
             document.body.removeChild(a); // Clean up the temporary link
             URL.revokeObjectURL(url); // Release the object URL
+            showToast('Gambar diunduh!');
         }
 
         /**
-         * Copies the text of the current quote to the clipboard and shows a temporary message.
+         * Menyalin teks quote atau membagikan menggunakan Web Share API.
          */
-        function copyCurrentQuoteTextAndShowMessage() {
+        async function shareCurrentQuote() {
             const slideWidth = quotesSlider.querySelector('.quote-slide').clientWidth;
             const currentIndex = Math.round(quotesSlider.scrollLeft / slideWidth);
             const currentSVG = quotesSlider.querySelectorAll('svg')[currentIndex];
 
             if (!currentSVG) {
-                console.error("No SVG found to copy text from.");
+                console.error("Tidak ada SVG ditemukan untuk menyalin teks.");
+                showErrorModal('Tidak ada SVG ditemukan untuk menyalin teks.');
                 return;
             }
 
@@ -831,80 +1382,208 @@
             });
             quoteText = quoteText.trim(); // Remove trailing newline
 
-            // Use a temporary textarea to copy text to clipboard
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'Manifesto Selfify',
+                        text: quoteText,
+                        url: window.location.href 
+                    });
+                    showToast('Quote berhasil dibagikan!');
+                } catch (error) {
+                    console.error('Error sharing:', error);
+                    // Fallback to copy if Web Share API fails or not supported
+                    copyTextToClipboard(quoteText);
+                    showToast('Teks quote disalin!');
+                }
+            } else {
+                // Fallback to copy if Web Share API not supported
+                copyTextToClipboard(quoteText);
+                showToast('Teks quote disalin!');
+            }
+        }
+
+        /**
+         * Fungsi pembantu untuk menyalin teks ke clipboard.
+         * @param {string} text - Teks yang akan disalin.
+         */
+        function copyTextToClipboard(text) {
             const tempTextArea = document.createElement('textarea');
-            tempTextArea.value = quoteText;
+            tempTextArea.value = text;
             document.body.appendChild(tempTextArea);
             tempTextArea.select();
             document.execCommand('copy'); // Deprecated but widely supported in iframes
             document.body.removeChild(tempTextArea);
+        }
 
-            // Show a temporary "Copied!" message
-            const toast = document.createElement('div');
-            toast.className = 'toast-message';
-            toast.textContent = 'Teks disalin!'; // "Text copied!"
-            document.body.appendChild(toast);
+        /**
+         * Mengatur tampilan awal slider quotes.
+         */
+        function setupQuotesSlider() {
+            if (quotesSlider) {
+                quotesSlider.scrollLeft = 0; 
+            }
+        }
 
-            // Show and then hide the toast message
-            setTimeout(() => {
-                toast.classList.add('show');
-            }, 10); // Small delay to ensure reflow for transition
+        /**
+         * Mengirim pesan ke model bahasa besar (LLM) dan menampilkan responsnya.
+         * Menggunakan exponential backoff untuk retry.
+         * @param {string} userMessage - Pesan dari pengguna.
+         */
+        async function sendMessageToSelfie(userMessage) {
+            if (!userMessage.trim()) return;
 
-            setTimeout(() => {
-                toast.classList.remove('show');
-                toast.addEventListener('transitionend', () => toast.remove(), { once: true });
-            }, 2000); // Hide after 2 seconds
+            // Add user message to chat history display
+            const userMsgElement = document.createElement('div');
+            userMsgElement.className = 'chat-message user';
+            userMsgElement.textContent = userMessage;
+            chatHistoryDisplay.appendChild(userMsgElement);
+            chatHistoryDisplay.scrollTop = chatHistoryDisplay.scrollHeight; // Scroll to bottom
+
+            // Add user message to chat history for LLM context
+            chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
+
+            selfieChatInput.value = ''; // Clear input
+            sendSelfieMessageBtn.disabled = true; // Disable send button
+            selfieLoadingIndicator.style.display = 'block'; // Show loading indicator
+
+            const MAX_RETRIES = 5;
+            let retryCount = 0;
+            let success = false;
+
+            while (retryCount < MAX_RETRIES && !success) {
+                try {
+                    const payload = { contents: chatHistory };
+                    const apiKey = ""; // If you want to use models other than gemini-2.5-flash-preview-05-20 or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 429 && retryCount < MAX_RETRIES - 1) { // Too Many Requests
+                            const delay = Math.pow(2, retryCount) * 1000; // Exponential backoff
+                            console.warn(`Rate limit hit. Retrying in ${delay / 1000}s...`);
+                            await new Promise(res => setTimeout(res, delay));
+                            retryCount++;
+                            continue; // Retry the loop
+                        }
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const selfieResponseText = result.candidates[0].content.parts[0].text;
+                        
+                        // Add Selfie's response to chat history display
+                        const selfieMsgElement = document.createElement('div');
+                        selfieMsgElement.className = 'chat-message selfie';
+                        selfieMsgElement.textContent = selfieResponseText;
+                        chatHistoryDisplay.appendChild(selfieMsgElement);
+                        chatHistoryDisplay.scrollTop = chatHistoryDisplay.scrollHeight; // Scroll to bottom
+
+                        // Add Selfie's response to chat history for LLM context
+                        chatHistory.push({ role: "model", parts: [{ text: selfieResponseText }] });
+                        success = true; // Mark as success
+                    } else {
+                        throw new Error("Unexpected API response structure or missing content.");
+                    }
+                } catch (error) {
+                    console.error("Error talking to Selfie:", error);
+                    const errorMsgElement = document.createElement('div');
+                    errorMsgElement.className = 'chat-message selfie';
+                    errorMsgElement.textContent = "Maaf, Selfie sedang tidak bisa merespons. Coba lagi nanti.";
+                    chatHistoryDisplay.appendChild(errorMsgElement);
+                    chatHistoryDisplay.scrollTop = chatHistoryDisplay.scrollHeight;
+                    break; // Exit loop on critical error
+                } finally {
+                    selfieLoadingIndicator.style.display = 'none'; // Hide loading indicator
+                    sendSelfieMessageBtn.disabled = false; // Re-enable send button
+                }
+            }
         }
 
 
         // --- Event Listeners ---
-        // Event listener for opening the confession modal
-        openConfessModalBtn.addEventListener('click', () => {
-            showModal(confessModal);
-        });
+        // Event listener untuk membuka modal pengakuan
+        //openConfessModalBtn.addEventListener('click', () => { // This listener is now attached dynamically in renderConfessions
+        //    showModal(confessModal);
+        //});
 
-        // Event listener for submitting a new confession
+        // Event listener untuk mengirim pengakuan baru
         submitConfessBtn.addEventListener('click', submitConfession);
         
-        // Event listener for canceling a new confession
+        // Event listener untuk membatalkan pengakuan baru
         cancelConfessBtn.addEventListener('click', () => {
             hideModal(confessModal);
             modalConfessText.value = ''; // Clear textarea
             modalAlterName.value = ''; // Clear input
         });
 
-        // Event listener for closing the success message modal
+        // Event listener untuk menutup modal pesan sukses
         closeSuccessBtn.addEventListener('click', () => {
             hideModal(successModal);
         });
 
-        // Event listener for closing the error message modal
+        // Event listener untuk menutup modal pesan error
         closeErrorBtn.addEventListener('click', () => {
             hideModal(errorModal);
         });
 
-        // Event listener for navigating to the previous quote in the slider
+        // Event listener untuk navigasi ke quote sebelumnya
         prevQuoteBtn.addEventListener('click', () => {
             quotesSlider.scrollBy({ left: -quotesSlider.clientWidth, behavior: 'smooth' });
         });
 
-        // Event listener for navigating to the next quote in the slider
+        // Event listener untuk navigasi ke quote berikutnya
         nextQuoteBtn.addEventListener('click', () => {
             quotesSlider.scrollBy({ left: quotesSlider.clientWidth, behavior: 'smooth' });
         });
 
-        // Event listener for downloading the current quote
+        // Event listener untuk mengunduh quote
         downloadQuoteBtn.addEventListener('click', downloadCurrentQuote);
 
-        // Event listener for sharing the current quote (copies text to clipboard)
-        shareQuoteBtn.addEventListener('click', copyCurrentQuoteTextAndShowMessage);
+        // Event listener untuk membagikan quote
+        shareQuoteBtn.addEventListener('click', shareCurrentQuote);
 
-        // Close modals by clicking on the overlay
+        // Event listener untuk submit email
+        submitEmailBtn.addEventListener('click', submitEmail);
+
+        // Tutup modal dengan mengklik overlay
         window.addEventListener('click', (e) => {
             if (e.target === confessModal) hideModal(confessModal);
             if (e.target === successModal) hideModal(successModal);
-            if (e.target === errorModal) hideModal(errorModal); // Close error modal on overlay click
+            if (e.target === errorModal) hideModal(errorModal); 
+            if (e.target === talkToSelfieModal) hideModal(talkToSelfieModal); // NEW: Close talk to Selfie modal
         });
+
+        // Talk to Selfie Event Listeners
+        openTalkToSelfieModalBtn.addEventListener('click', () => {
+            showModal(talkToSelfieModal);
+            selfieChatInput.focus(); // Focus on input when modal opens
+            chatHistoryDisplay.scrollTop = chatHistoryDisplay.scrollHeight; // Scroll to bottom
+        });
+
+        closeTalkToSelfieModalBtn.addEventListener('click', () => {
+            hideModal(talkToSelfieModal);
+        });
+
+        sendSelfieMessageBtn.addEventListener('click', () => {
+            sendMessageToSelfie(selfieChatInput.value);
+        });
+
+        selfieChatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessageToSelfie(selfieChatInput.value);
+            }
+        });
+
 
         // --- Initial Load ---
         // Authenticate user and then set up Firestore listener
@@ -931,8 +1610,7 @@
 
         // Ensure the initial render of the slider is correct on DOMContentLoaded
         document.addEventListener('DOMContentLoaded', () => {
-            // No need to call renderConfessions here directly, as setupConfessionsListener will handle it
-            // after authentication.
+            setupQuotesSlider();
         });
 
     </script>
