@@ -1191,13 +1191,13 @@
                 post.innerHTML = `
                     ${confess.text}
                     <div class="actions">
-                        <button class="reaction-btn ${confess.likes?.includes(userId) ? 'active' : ''}" data-type="likes" data-id="${confess.id}">
+                        <button class="reaction-btn ${(confess.likes || []).includes(userId) ? 'active' : ''}" data-type="likes" data-id="${confess.id}">
                             ❤️ <span class="count">${confess.likes?.length || 0}</span>
                         </button>
-                        <button class="reaction-btn ${confess.loves?.includes(userId) ? 'active' : ''}" data-type="loves" data-id="${confess.id}">
+                        <button class="reaction-btn ${(confess.loves || []).includes(userId) ? 'active' : ''}" data-type="loves" data-id="${confess.id}">
                             💖 <span class="count">${confess.loves?.length || 0}</span>
                         </button>
-                        <button class="reaction-btn ${confess.fires?.includes(userId) ? 'active' : ''}" data-type="fires" data-id="${confess.id}">
+                        <button class="reaction-btn ${(confess.fires || []).includes(userId) ? 'active' : ''}" data-type="fires" data-id="${confess.id}">
                             🔥 <span class="count">${confess.fires?.length || 0}</span>
                         </button>
                         <button class="share-confession-btn" data-id="${confess.id}">
