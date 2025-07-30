@@ -825,6 +825,19 @@
         </div>
     </div>
 
+    <!-- New Custom Modal for Report Confession -->
+    <div class="modal-overlay" id="reportModal">
+        <div class="modal-content">
+            <h3>Laporkan Pengakuan</h3>
+            <p>Mengapa Anda ingin melaporkan pengakuan ini?</p>
+            <textarea id="reportReasonInput" class="modal-textarea" rows="3" placeholder="Misalnya: Spam, Konten tidak pantas, Lainnya..."></textarea>
+            <div class="modal-actions">
+                <button id="cancelReport" style="background: #444;">Batal</button>
+                <button id="submitReport">Kirim Laporan</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -880,6 +893,12 @@
         const sendSelfieMessageBtn = document.getElementById('sendSelfieMessageBtn');
         const closeTalkToSelfieModalBtn = document.getElementById('closeTalkToSelfieModalBtn');
         const selfieLoadingIndicator = document.getElementById('selfieLoadingIndicator');
+
+        // NEW: Report Modal Elements
+        const reportModal = document.getElementById('reportModal');
+        const reportReasonInput = document.getElementById('reportReasonInput');
+        const submitReportBtn = document.getElementById('submitReport');
+        const cancelReportBtn = document.getElementById('cancelReport');
 
         // Chat history for LLM context
         let chatHistory = [{ role: "model", parts: [{ text: "Halo! Ada yang bisa Selfie bantu?" }] }];
@@ -988,6 +1007,12 @@
                             </svg>
                             Bagikan
                         </button>
+                        <button class="report-confession-btn" data-id="${confess.id}" data-text="${confess.text}">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 15v6m-3-1.5V9.75a2.25 2.25 0 0 0-2.25-2.25H9.75A2.25 2.25 0 0 0 7.5 9.75v9.75m6-9.75h3m-3 0a3 3 0 1 1-6 0m6 0v2.25m-3-2.25A3 3 0 0 0 9.75 18v.75m-3-9.75h.008v.008H6.75V9.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                            </svg>
+                            Laporkan
+                        </button>
                     </div>
                     <div class="comments-section">
                         <h4>Komentar:</h4>
@@ -1043,18 +1068,33 @@
                             shareConfession(confess.text); // Pass the text directly
                         });
                     }
+                    // Setup event listener for report button for real confessions
+                    const reportButton = post.querySelector(`.report-confession-btn`);
+                    if (reportButton) {
+                        reportButton.addEventListener('click', (e) => {
+                            const confessionIdToReport = e.currentTarget.dataset.id;
+                            const confessionTextToReport = e.currentTarget.dataset.text;
+                            showReportModal(confessionIdToReport, confessionTextToReport);
+                        });
+                    }
                 } else {
                     // For dummy posts, just show "No comments" initially
                     const commentsListElement = document.getElementById(`comments-list-${confess.id}`);
                     if (commentsListElement) {
                         commentsListElement.innerHTML = '<div style="color: var(--secondary-text-color); font-size: 12px; text-align: center; padding: 10px;">Belum ada komentar.</div>';
                     }
-                    // Disable share button for dummy posts
+                    // Disable share and report buttons for dummy posts
                     const shareButton = post.querySelector(`.share-confession-btn`);
                     if (shareButton) {
                         shareButton.disabled = true;
                         shareButton.style.opacity = '0.5';
                         shareButton.style.cursor = 'not-allowed';
+                    }
+                    const reportButton = post.querySelector(`.report-confession-btn`);
+                    if (reportButton) {
+                        reportButton.disabled = true;
+                        reportButton.style.opacity = '0.5';
+                        reportButton.style.cursor = 'not-allowed';
                     }
                 }
             });
@@ -1554,6 +1594,79 @@
             }
         }
 
+        /**
+         * Menampilkan modal pelaporan pengakuan.
+         * @param {string} confessionId - ID pengakuan yang akan dilaporkan.
+         * @param {string} confessionText - Teks pengakuan yang akan dilaporkan.
+         */
+        let currentConfessionToReport = null; // Store the confession ID temporarily
+        let currentConfessionTextToReport = null; // Store the confession text temporarily
+
+        function showReportModal(confessionId, confessionText) {
+            if (!userId) {
+                showErrorModal('Anda perlu login untuk melaporkan pengakuan.');
+                return;
+            }
+            currentConfessionToReport = confessionId;
+            currentConfessionTextToReport = confessionText;
+            reportReasonInput.value = ''; // Clear previous input
+            showModal(reportModal);
+        }
+
+        /**
+         * Mengirim laporan pengakuan ke Firestore.
+         */
+        async function submitReport() {
+            const reason = reportReasonInput.value.trim();
+            if (reason.length === 0) {
+                reportReasonInput.style.borderColor = 'red';
+                setTimeout(() => { reportReasonInput.style.borderColor = 'var(--border-color)'; }, 1500);
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, `artifacts/${appId}/public/data/reports`), {
+                    reporterUserId: userId,
+                    confessionId: currentConfessionToReport,
+                    confessionText: currentConfessionTextToReport,
+                    reason: reason,
+                    timestamp: serverTimestamp()
+                });
+                hideModal(reportModal);
+                showToast('Laporan Anda telah terkirim. Terima kasih!');
+            } catch (error) {
+                console.error("Error submitting report:", error);
+                showErrorModal('Gagal mengirim laporan. Silakan coba lagi.');
+            } finally {
+                currentConfessionToReport = null;
+                currentConfessionTextToReport = null;
+            }
+        }
+
+        /**
+         * Menyalin teks pengakuan ke clipboard atau membagikan menggunakan Web Share API.
+         * @param {string} confessionText - Teks pengakuan yang akan dibagikan.
+         */
+        async function shareConfession(confessionText) {
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'Manifesto Selfify - Pengakuan',
+                        text: `Pengakuan dari Manifesto Selfify: "${confessionText}"`,
+                        url: window.location.href 
+                    });
+                    showToast('Pengakuan berhasil dibagikan!');
+                } catch (error) {
+                    console.error('Error sharing confession:', error);
+                    copyTextToClipboard(confessionText);
+                    showToast('Teks pengakuan disalin!');
+                }
+            } else {
+                copyTextToClipboard(confessionText);
+                showToast('Teks pengakuan disalin!');
+            }
+        }
+
 
         // --- Event Listeners ---
         // Event listener untuk membuka modal pengakuan
@@ -1608,6 +1721,7 @@
             if (e.target === successModal) hideModal(successModal);
             if (e.target === errorModal) hideModal(errorModal); 
             if (e.target === talkToSelfieModal) hideModal(talkToSelfieModal); // NEW: Close talk to Selfie modal
+            if (e.target === reportModal) hideModal(reportModal); // NEW: Close report modal on overlay click
         });
 
         // Talk to Selfie Event Listeners
@@ -1641,6 +1755,13 @@
             } else {
                 modalConfessCharCount.classList.remove('warning');
             }
+        });
+
+        // NEW: Report Modal Event Listeners
+        submitReportBtn.addEventListener('click', submitReport);
+        cancelReportBtn.addEventListener('click', () => {
+            hideModal(reportModal);
+            reportReasonInput.value = ''; // Clear input
         });
 
 
