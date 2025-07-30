@@ -784,6 +784,64 @@
                             </text>
                         </svg>
                     </div>
+                    <!-- NEW QUOTES START HERE -->
+                    <div class="quote-slide">
+                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="100%" height="100%" fill="#1e1e1e"/>
+                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#e5e5e5" font-size="20" font-family="'Inter', sans-serif" font-weight="bold">
+                                <tspan x="50%" dy="-0.6em">Santai aja</tspan>
+                                <tspan x="50%" dy="1.2em">gak semua hal harus</tspan>
+                                <tspan x="50%" dy="1.2em">dimengerti saat itu juga.</tspan>
+                            </text>
+                        </svg>
+                    </div>
+                    <div class="quote-slide">
+                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="100%" height="100%" fill="#fde047"/>
+                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#121212" font-size="24" font-family="'Lexend', sans-serif" font-weight="bold">
+                                <tspan x="50%" dy="-0.6em">Ngaku capek itu bukan lemah</tspan>
+                                <tspan x="50%" dy="1.2em">itu upgrade mental.</tspan>
+                            </text>
+                        </svg>
+                    </div>
+                    <div class="quote-slide">
+                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="100%" height="100%" fill="#2a2a2a"/>
+                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#e5e5e5" font-size="20" font-family="'Inter', sans-serif" font-weight="bold">
+                                <tspan x="50%" dy="-0.6em">Reset itu bukan drama</tspan>
+                                <tspan x="50%" dy="1.2em">itu self-care versi jujur.</tspan>
+                            </text>
+                        </svg>
+                    </div>
+                    <div class="quote-slide">
+                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="100%" height="100%" fill="#1e1e1e"/>
+                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#e5e5e5" font-size="20" font-family="'Inter', sans-serif" font-weight="bold">
+                                <tspan x="50%" dy="-0.6em">Ngejar target boleh</tspan>
+                                <tspan x="50%" dy="1.2em">tapi jangan sampai</tspan>
+                                <tspan x="50%" dy="1.2em">kehilangan diri.</tspan>
+                            </text>
+                        </svg>
+                    </div>
+                    <div class="quote-slide">
+                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="100%" height="100%" fill="#fde047"/>
+                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#121212" font-size="20" font-family="'Lexend', sans-serif" font-weight="bold">
+                                <tspan x="50%" dy="-0.6em">Bukan semua hal harus dikejar</tspan>
+                                <tspan x="50%" dy="1.2em">Ada yang cukup lo temukan.</tspan>
+                            </text>
+                        </svg>
+                    </div>
+                    <div class="quote-slide">
+                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="100%" height="100%" fill="#2a2a2a"/>
+                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#e5e5e5" font-size="20" font-family="'Inter', sans-serif" font-weight="bold">
+                                <tspan x="50%" dy="-0.6em">Hidup bukan soal cepat-cepetan</tspan>
+                                <tspan x="50%" dy="1.2em">tapi soal arahnya.</tspan>
+                            </text>
+                        </svg>
+                    </div>
+                    <!-- NEW QUOTES END HERE -->
                 </div>
                 <div class="slider-nav">
                     <button id="prevQuote">‹</button>
@@ -917,20 +975,58 @@
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
+        let app;
+        let db;
+        let auth;
+
+        /**
+         * Menampilkan modal error dengan pesan tertentu.
+         * Dipindahkan ke atas agar bisa diakses saat inisialisasi Firebase.
+         * @param {string} message - Pesan error yang akan ditampilkan.
+         */
+        function showErrorModal(message) {
+            const errorMessageDisplay = document.getElementById('errorMessage');
+            const errorModal = document.getElementById('errorModal');
+            if (errorMessageDisplay && errorModal) {
+                errorMessageDisplay.textContent = message;
+                errorModal.classList.add('show');
+                document.body.classList.add('modal-open');
+            } else {
+                console.error("Error modal elements not found. Message:", message);
+                alert("Terjadi kesalahan fatal: " + message); // Fallback alert
+            }
+        }
+
+        try {
+            // Periksa apakah firebaseConfig memiliki projectId
+            if (Object.keys(firebaseConfig).length === 0 || !firebaseConfig.projectId) {
+                throw new Error("Konfigurasi Firebase tidak ditemukan atau tidak lengkap. Pastikan lingkungan Canvas menyediakan '__firebase_config'.");
+            }
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            console.log("Firebase initialized successfully.");
+        } catch (e) {
+            console.error("Gagal menginisialisasi Firebase:", e);
+            showErrorModal(`Gagal menginisialisasi Firebase: ${e.message}. Beberapa fitur mungkin tidak berfungsi.`);
+            // Hentikan eksekusi lebih lanjut jika inisialisasi Firebase gagal
+            // Ini mencegah error 'auth is undefined' atau 'db is undefined'
+            document.addEventListener('DOMContentLoaded', () => {
+                hideGlobalLoading(); // Pastikan loading disembunyikan jika inisialisasi gagal
+            });
+            throw e; // Lemparkan error agar terlihat di konsol developer
+        }
 
         let userId = null; // Untuk menyimpan ID pengguna yang terautentikasi
 
         // --- DOM Elements ---
         const confessList = document.getElementById('confessList');
-        const loadingMessage = document.getElementById('loadingMessage');
+        const loadingMessage = document.getElementById('loadingMessage'); // Ini mungkin tidak lagi digunakan secara langsung karena ada globalLoadingOverlay
         
         const openConfessModalBtn = document.getElementById('openConfessModalBtn');
         const confessModal = document.getElementById('confessModal');
         const successModal = document.getElementById('successModal');
-        const errorModal = document.getElementById('errorModal'); 
+        const errorModal = document.getElementById('errorModal'); // Sudah didefinisikan di atas
         
         const modalConfessText = document.getElementById('modalConfessText');
         const modalConfessCharCount = document.getElementById('modalConfessCharCount'); // New element
@@ -940,8 +1036,8 @@
         const submitConfessBtn = document.getElementById('submitConfess');
         const cancelConfessBtn = document.getElementById('cancelConfess');
         const closeSuccessBtn = document.getElementById('closeSuccessModal');
-        const closeErrorBtn = document.getElementById('closeErrorModal'); 
-        const errorMessageDisplay = document.getElementById('errorMessage'); 
+        const closeErrorBtn = document.getElementById('closeErrorModal'); // Sudah didefinisikan di atas
+        // const errorMessageDisplay = document.getElementById('errorMessage'); // Sudah didefinisikan di atas
 
         const quotesSlider = document.getElementById('quotesSlider');
         const prevQuoteBtn = document.getElementById('prevQuote');
@@ -1406,7 +1502,8 @@
          */
         function setupConfessionsListener() {
             if (!db) {
-                console.error("Firestore is not initialized.");
+                console.error("Firestore is not initialized. Cannot set up confessions listener.");
+                hideGlobalLoading(); // Ensure loading is hidden if DB is not ready
                 return;
             }
             
@@ -1503,15 +1600,6 @@
                 submitConfessBtn.textContent = 'Kirim';
                 submitConfessBtn.disabled = false;
             }
-        }
-
-        /**
-         * Menampilkan modal error dengan pesan tertentu.
-         * @param {string} message - Pesan error yang akan ditampilkan.
-         */
-        function showErrorModal(message) {
-            errorMessageDisplay.textContent = message;
-            showModal(errorModal);
         }
 
         /**
@@ -1963,27 +2051,35 @@
 
         // --- Initial Load ---
         // Authenticate user and then set up Firestore listener
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                userId = user.uid;
-                console.log("Authenticated with Firebase. User ID:", userId);
-                setupConfessionsListener(); // Start listening for confessions once authenticated
-            } else {
-                // Sign in anonymously if no user is logged in
-                try {
-                    if (initialAuthToken) {
-                        await signInWithCustomToken(auth, initialAuthToken);
-                    } else {
-                        await signInAnonymously(auth);
+        // Ini hanya akan dijalankan jika inisialisasi Firebase berhasil
+        if (auth) { // Pastikan 'auth' terdefinisi sebelum mencoba menggunakannya
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userId = user.uid;
+                    console.log("Authenticated with Firebase. User ID:", userId);
+                    setupConfessionsListener(); // Start listening for confessions once authenticated
+                } else {
+                    // Sign in anonymously if no user is logged in
+                    try {
+                        if (initialAuthToken) {
+                            await signInWithCustomToken(auth, initialAuthToken);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    } catch (error) {
+                        console.error("Error during anonymous sign-in:", error);
+                        showErrorModal('Gagal melakukan autentikasi. Beberapa fitur mungkin tidak berfungsi.');
+                        hideGlobalLoading(); // Ensure loading is hidden on auth error
                     }
-                } catch (error) {
-                    console.error("Error during anonymous sign-in:", error);
-                    showErrorModal('Gagal melakukan autentikasi. Beberapa fitur mungkin tidak berfungsi.');
-                    // if (loadingMessage) loadingMessage.textContent = 'Gagal memuat pengakuan (autentikasi gagal).'; // This is now handled by globalLoading
-                    hideGlobalLoading(); // Ensure loading is hidden on auth error
                 }
-            }
-        });
+            });
+        } else {
+            console.error("Firebase Auth not initialized. Skipping authentication listener.");
+            // Jika auth tidak terinisialisasi, pastikan loading disembunyikan
+            document.addEventListener('DOMContentLoaded', () => {
+                hideGlobalLoading();
+            });
+        }
 
         // Ensure the initial render of the slider is correct on DOMContentLoaded
         document.addEventListener('DOMContentLoaded', () => {
