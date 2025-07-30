@@ -274,6 +274,13 @@
             box-shadow: 0 4px 15px rgba(253, 224, 71, 0.2);
         }
 
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
         .email-section {
             margin-top: 40px;
             padding: 24px;
@@ -634,9 +641,55 @@
             color: red;
         }
 
+        /* Global Loading Overlay */
+        #globalLoadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            color: var(--primary-color);
+            font-size: 20px;
+            font-weight: bold;
+            flex-direction: column;
+            gap: 15px;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s linear;
+        }
+
+        #globalLoadingOverlay.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
     </style>
 </head>
 <body>
+    <div id="globalLoadingOverlay">
+        <div class="spinner"></div>
+        <p id="globalLoadingMessage">Memuat...</p>
+    </div>
+
     <div class="container">
         <h2>Manifesto Selfify</h2>
         <div class="poem">
@@ -779,8 +832,9 @@
             <div class="char-count" id="modalConfessCharCount">0/500</div> <!-- New character counter -->
             <div class="alter-input-wrapper">
                 <span>@</span>
-                <input type="text" id="modalAlterName" class="modal-input" placeholder="nama_alter_lo">
+                <input type="text" id="modalAlterName" class="modal-input" placeholder="nama_alter_lo" maxlength="20">
             </div>
+            <div class="char-count" id="modalAlterNameCharCount">0/20</div> <!-- New alter name character counter -->
             <div class="modal-actions">
                 <button id="cancelConfess" style="background: #444;">Batal</button>
                 <button id="submitConfess">Kirim</button>
@@ -838,11 +892,23 @@
         </div>
     </div>
 
+    <!-- New Custom Modal for Delete Confirmation -->
+    <div class="modal-overlay" id="deleteConfirmModal">
+        <div class="modal-content">
+            <h3>Hapus Pengakuan?</h3>
+            <p>Anda yakin ingin menghapus pengakuan ini? Tindakan ini tidak bisa dibatalkan.</p>
+            <div class="modal-actions">
+                <button id="cancelDelete" style="background: #444;">Batal</button>
+                <button id="confirmDelete" style="background: #dc3545;">Hapus</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, onSnapshot, serverTimestamp, doc, updateDoc, arrayUnion, arrayRemove, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, onSnapshot, serverTimestamp, doc, updateDoc, arrayUnion, arrayRemove, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Firebase Configuration (DO NOT EDIT)
         // These variables are provided by the Canvas environment.
@@ -869,6 +935,7 @@
         const modalConfessText = document.getElementById('modalConfessText');
         const modalConfessCharCount = document.getElementById('modalConfessCharCount'); // New element
         const modalAlterName = document.getElementById('modalAlterName');
+        const modalAlterNameCharCount = document.getElementById('modalAlterNameCharCount'); // New element
 
         const submitConfessBtn = document.getElementById('submitConfess');
         const cancelConfessBtn = document.getElementById('cancelConfess');
@@ -899,6 +966,16 @@
         const reportReasonInput = document.getElementById('reportReasonInput');
         const submitReportBtn = document.getElementById('submitReport');
         const cancelReportBtn = document.getElementById('cancelReport');
+
+        // NEW: Delete Modal Elements
+        const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+        const confirmDeleteBtn = document.getElementById('confirmDelete');
+        const cancelDeleteBtn = document.getElementById('cancelDelete');
+        let confessionIdToDelete = null; // To store the ID of the confession to be deleted
+
+        // NEW: Global Loading Overlay
+        const globalLoadingOverlay = document.getElementById('globalLoadingOverlay');
+        const globalLoadingMessage = document.getElementById('globalLoadingMessage');
 
         // Chat history for LLM context
         let chatHistory = [{ role: "model", parts: [{ text: "Halo! Ada yang bisa Selfie bantu?" }] }];
@@ -943,6 +1020,24 @@
                 toast.classList.remove('show');
                 toast.addEventListener('transitionend', () => toast.remove(), { once: true });
             }, 2000); 
+        }
+
+        /**
+         * Menampilkan overlay loading global.
+         * @param {string} message - Pesan yang akan ditampilkan di overlay.
+         */
+        function showGlobalLoading(message = 'Memuat...') {
+            globalLoadingMessage.textContent = message;
+            globalLoadingOverlay.classList.add('show');
+            document.body.classList.add('modal-open'); // Prevent scrolling while global loading is active
+        }
+
+        /**
+         * Menyembunyikan overlay loading global.
+         */
+        function hideGlobalLoading() {
+            globalLoadingOverlay.classList.remove('show');
+            document.body.classList.remove('modal-open'); // Re-enable scrolling
         }
 
         /**
@@ -1013,6 +1108,14 @@
                             </svg>
                             Laporkan
                         </button>
+                        ${confess.userId === userId ? `
+                        <button class="delete-confession-btn" data-id="${confess.id}">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.927a2.25 2.25 0 0 1-2.244-2.077L5.072 5.455m14.088 0a2.25 2.25 0 0 0-2.244-2.077H8.927a2.25 2.25 0 0 0-2.244 2.077M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            </svg>
+                            Hapus
+                        </button>
+                        ` : ''}
                     </div>
                     <div class="comments-section">
                         <h4>Komentar:</h4>
@@ -1039,9 +1142,18 @@
                 });
 
                 // Setup event listener for comment submission
-                post.querySelector(`.submit-comment-btn`).addEventListener('click', (e) => {
+                const submitCommentBtn = post.querySelector(`.submit-comment-btn`);
+                submitCommentBtn.addEventListener('click', async (e) => {
                     const confessionId = e.currentTarget.dataset.id;
-                    submitComment(confessionId);
+                    const originalText = submitCommentBtn.textContent;
+                    submitCommentBtn.textContent = 'Mengirim...';
+                    submitCommentBtn.disabled = true;
+                    try {
+                        await submitComment(confessionId);
+                    } finally {
+                        submitCommentBtn.textContent = originalText;
+                        submitCommentBtn.disabled = false;
+                    }
                 });
 
                 // Setup character count for comment input
@@ -1077,6 +1189,14 @@
                             showReportModal(confessionIdToReport, confessionTextToReport);
                         });
                     }
+                    // Setup event listener for delete button for real confessions
+                    const deleteButton = post.querySelector(`.delete-confession-btn`);
+                    if (deleteButton) { // This button only exists if userId matches
+                        deleteButton.addEventListener('click', (e) => {
+                            confessionIdToDelete = e.currentTarget.dataset.id;
+                            showModal(deleteConfirmModal);
+                        });
+                    }
                 } else {
                     // For dummy posts, just show "No comments" initially
                     const commentsListElement = document.getElementById(`comments-list-${confess.id}`);
@@ -1095,6 +1215,12 @@
                         reportButton.disabled = true;
                         reportButton.style.opacity = '0.5';
                         reportButton.style.cursor = 'not-allowed';
+                    }
+                    const deleteButton = post.querySelector(`.delete-confession-btn`);
+                    if (deleteButton) {
+                        deleteButton.disabled = true;
+                        deleteButton.style.opacity = '0.5';
+                        deleteButton.style.cursor = 'not-allowed';
                     }
                 }
             });
@@ -1290,6 +1416,9 @@
             // Create a query to order confessions by creation date (newest first)
             const q = query(confessionsCollectionRef); 
 
+            // Show global loading when starting to fetch confessions
+            showGlobalLoading('Memuat pengakuan...');
+
             // Set up a real-time listener
             onSnapshot(q, (snapshot) => {
                 const fetchedConfessions = [];
@@ -1299,10 +1428,10 @@
                 // Sort by timestamp in descending order (newest first) in memory
                 fetchedConfessions.sort((a, b) => (b.timestamp?.toDate() || 0) - (a.timestamp?.toDate() || 0));
                 renderConfessions(fetchedConfessions);
-                if (loadingMessage) loadingMessage.style.display = 'none'; // Hide loading message
+                hideGlobalLoading(); // Hide loading message once data is rendered
             }, (error) => {
                 console.error("Error fetching confessions: ", error);
-                if (loadingMessage) loadingMessage.textContent = 'Gagal memuat pengakuan.';
+                hideGlobalLoading(); // Hide loading even on error
                 showErrorModal('Gagal memuat pengakuan. Silakan coba refresh halaman.');
             });
         }
@@ -1330,9 +1459,15 @@
                 modalAlterName.parentElement.style.borderColor = 'red';
                 setTimeout(() => { modalAlterName.parentElement.style.borderColor = 'var(--border-color)'; }, 1500);
                 isValid = false;
+            } else if (alter.length > ALTER_NAME_MAX_LENGTH) { // New validation for alter name length
+                showErrorModal(`Nama alter terlalu panjang. Maksimal ${ALTER_NAME_MAX_LENGTH} karakter.`);
+                isValid = false;
             }
 
             if (!isValid) return; // Stop if validation fails
+
+            submitConfessBtn.textContent = 'Mengirim...';
+            submitConfessBtn.disabled = true;
             
             try {
                 // Ensure user is authenticated before adding data
@@ -1364,6 +1499,9 @@
             } catch (e) {
                 console.error("Error adding document: ", e);
                 showErrorModal('Terjadi kesalahan saat mengirim pengakuan. Silakan coba lagi.');
+            } finally {
+                submitConfessBtn.textContent = 'Kirim';
+                submitConfessBtn.disabled = false;
             }
         }
 
@@ -1624,6 +1762,9 @@
                 return;
             }
 
+            submitReportBtn.textContent = 'Mengirim Laporan...';
+            submitReportBtn.disabled = true;
+
             try {
                 await addDoc(collection(db, `artifacts/${appId}/public/data/reports`), {
                     reporterUserId: userId,
@@ -1640,6 +1781,39 @@
             } finally {
                 currentConfessionToReport = null;
                 currentConfessionTextToReport = null;
+                submitReportBtn.textContent = 'Kirim Laporan';
+                submitReportBtn.disabled = false;
+            }
+        }
+
+        /**
+         * Menghapus pengakuan dari Firestore.
+         */
+        async function performDeleteConfession() {
+            if (!confessionIdToDelete) {
+                console.error("No confession ID to delete.");
+                showErrorModal('Tidak ada pengakuan yang dipilih untuk dihapus.');
+                return;
+            }
+
+            hideModal(deleteConfirmModal); // Hide confirmation modal immediately
+
+            confirmDeleteBtn.textContent = 'Menghapus...';
+            confirmDeleteBtn.disabled = true;
+            cancelDeleteBtn.disabled = true;
+
+            try {
+                const confessionRef = doc(db, `artifacts/${appId}/public/data/confessions`, confessionIdToDelete);
+                await deleteDoc(confessionRef);
+                showToast('Pengakuan berhasil dihapus!');
+            } catch (error) {
+                console.error("Error deleting confession:", error);
+                showErrorModal('Gagal menghapus pengakuan. Silakan coba lagi.');
+            } finally {
+                confessionIdToDelete = null; // Reset the stored ID
+                confirmDeleteBtn.textContent = 'Hapus';
+                confirmDeleteBtn.disabled = false;
+                cancelDeleteBtn.disabled = false;
             }
         }
 
@@ -1684,6 +1858,8 @@
             modalAlterName.value = ''; // Clear input
             modalConfessCharCount.textContent = `0/${CONFESS_MAX_LENGTH}`; // Reset char count
             modalConfessCharCount.classList.remove('warning'); // Remove warning
+            modalAlterNameCharCount.textContent = `0/${ALTER_NAME_MAX_LENGTH}`; // Reset alter name char count
+            modalAlterNameCharCount.classList.remove('warning'); // Remove alter name warning
         });
 
         // Event listener untuk menutup modal pesan sukses
@@ -1722,6 +1898,7 @@
             if (e.target === errorModal) hideModal(errorModal); 
             if (e.target === talkToSelfieModal) hideModal(talkToSelfieModal); // NEW: Close talk to Selfie modal
             if (e.target === reportModal) hideModal(reportModal); // NEW: Close report modal on overlay click
+            if (e.target === deleteConfirmModal) hideModal(deleteConfirmModal); // NEW: Close delete confirm modal on overlay click
         });
 
         // Talk to Selfie Event Listeners
@@ -1757,11 +1934,30 @@
             }
         });
 
+        // NEW: Event listener for alter name input character count
+        const ALTER_NAME_MAX_LENGTH = 20; // Max length for alter name
+        modalAlterName.addEventListener('input', () => {
+            const currentLength = modalAlterName.value.length;
+            modalAlterNameCharCount.textContent = `${currentLength}/${ALTER_NAME_MAX_LENGTH}`;
+            if (currentLength >= ALTER_NAME_MAX_LENGTH - 5) { // Warning 5 chars before limit
+                modalAlterNameCharCount.classList.add('warning');
+            } else {
+                modalAlterNameCharCount.classList.remove('warning');
+            }
+        });
+
         // NEW: Report Modal Event Listeners
         submitReportBtn.addEventListener('click', submitReport);
         cancelReportBtn.addEventListener('click', () => {
             hideModal(reportModal);
             reportReasonInput.value = ''; // Clear input
+        });
+
+        // NEW: Delete Modal Event Listeners
+        confirmDeleteBtn.addEventListener('click', performDeleteConfession);
+        cancelDeleteBtn.addEventListener('click', () => {
+            hideModal(deleteConfirmModal);
+            confessionIdToDelete = null; // Clear stored ID
         });
 
 
@@ -1783,7 +1979,8 @@
                 } catch (error) {
                     console.error("Error during anonymous sign-in:", error);
                     showErrorModal('Gagal melakukan autentikasi. Beberapa fitur mungkin tidak berfungsi.');
-                    if (loadingMessage) loadingMessage.textContent = 'Gagal memuat pengakuan (autentikasi gagal).';
+                    // if (loadingMessage) loadingMessage.textContent = 'Gagal memuat pengakuan (autentikasi gagal).'; // This is now handled by globalLoading
+                    hideGlobalLoading(); // Ensure loading is hidden on auth error
                 }
             }
         });
