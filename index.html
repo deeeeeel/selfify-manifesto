@@ -877,6 +877,7 @@
          * @param {HTMLElement} modalElement - Elemen modal yang akan ditampilkan.
          */
         function showModal(modalElement) {
+            console.log('showModal called for:', modalElement.id); // Debugging log
             modalElement.classList.add('show');
             document.body.classList.add('modal-open'); 
         }
@@ -886,6 +887,7 @@
          * @param {HTMLElement} modalElement - Elemen modal yang akan disembunyikan.
          */
         function hideModal(modalElement) {
+            console.log('hideModal called for:', modalElement.id); // Debugging log
             modalElement.classList.remove('show');
             document.body.classList.remove('modal-open'); 
         }
@@ -915,6 +917,7 @@
          * @param {Array<Object>} confessionsData - Array objek pengakuan.
          */
         function renderConfessions(confessionsData) {
+            console.log('renderConfessions called.'); // Debugging log
             // Store the current scroll position
             const currentScrollTop = confessList.scrollTop;
             const isScrolledToBottom = confessList.scrollHeight - confessList.clientHeight <= currentScrollTop + 1; // +1 for tolerance
@@ -1033,10 +1036,15 @@
             // Re-attach event listener for the sticky button
             const newOpenConfessModalBtn = confessList.querySelector('#openConfessModalBtn');
             if (newOpenConfessModalBtn) {
+                console.log('openConfessModalBtn found and listener re-attached.'); // Debugging log
                 newOpenConfessModalBtn.addEventListener('click', () => {
+                    console.log('openConfessModalBtn clicked!'); // Debugging log
                     showModal(confessModal);
                 });
+            } else {
+                console.error('openConfessModalBtn not found after rendering confessions.'); // Debugging log
             }
+
 
             if (allConfessions.length === 0) { // Check against allConfessions, including dummies
                 confessList.innerHTML = '<div style="color: var(--secondary-text-color); padding: 20px;">Belum ada pengakuan. Jadilah yang pertama!</div>' + stickyFormHtml;
