@@ -321,14 +321,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            opacity: 0; /* Reverted */
+            visibility: hidden; /* Reverted */
+            transition: opacity 0.3s ease, visibility 0.3s ease; /* Reverted */
             z-index: 1000;
         }
         .modal-overlay.show {
-            opacity: 1;
-            visibility: visible;
+            opacity: 1; /* Reverted */
+            visibility: visible; /* Reverted */
         }
         .modal-content {
             background: var(--surface-color);
@@ -338,11 +338,11 @@
             max-width: 380px;
             text-align: center;
             border: 1px solid var(--border-color);
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
+            transform: scale(0.9); /* Reverted */
+            transition: transform 0.3s ease; /* Reverted */
             position: relative;
         }
-        .modal-overlay.show .modal-content {
+        .modal-overlay.show .modal-content { /* Re-added this block */
             transform: scale(1);
         }
         .modal-content h3 {
@@ -622,6 +622,18 @@
             box-shadow: 0 6px 20px rgba(0,0,0,0.5);
         }
 
+        /* New style for character count */
+        .char-count {
+            font-size: 12px;
+            color: var(--secondary-text-color);
+            text-align: right;
+            margin-top: -10px; /* Adjust margin to be closer to textarea */
+            margin-bottom: 16px; /* Space before next element */
+        }
+        .char-count.warning {
+            color: red;
+        }
+
     </style>
 </head>
 <body>
@@ -764,6 +776,7 @@
         <div class="modal-content">
             <h3>Buat Pengakuan</h3>
             <textarea id="modalConfessText" class="modal-textarea" rows="5" placeholder="Tulis pengakuan lo di sini..."></textarea>
+            <div class="char-count" id="modalConfessCharCount">0/500</div> <!-- New character counter -->
             <div class="alter-input-wrapper">
                 <span>@</span>
                 <input type="text" id="modalAlterName" class="modal-input" placeholder="nama_alter_lo">
@@ -841,6 +854,7 @@
         const errorModal = document.getElementById('errorModal'); 
         
         const modalConfessText = document.getElementById('modalConfessText');
+        const modalConfessCharCount = document.getElementById('modalConfessCharCount'); // New element
         const modalAlterName = document.getElementById('modalAlterName');
 
         const submitConfessBtn = document.getElementById('submitConfess');
@@ -968,6 +982,12 @@
                         <button class="reaction-btn ${confess.fires?.includes(userId) ? 'active' : ''}" data-type="fires" data-id="${confess.id}">
                             🔥 <span class="count">${confess.fires?.length || 0}</span>
                         </button>
+                        <button class="share-confession-btn" data-id="${confess.id}">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.186 2.25 2.25 0 0 0-3.933 2.186Z" />
+                            </svg>
+                            Bagikan
+                        </button>
                     </div>
                     <div class="comments-section">
                         <h4>Komentar:</h4>
@@ -1016,11 +1036,25 @@
                 // Only setup listener for actual Firestore posts, not dummies
                 if (!confess.id.startsWith('dummy')) {
                     setupCommentsListener(confess.id);
+                    // Setup event listener for share button for real confessions
+                    const shareButton = post.querySelector(`.share-confession-btn`);
+                    if (shareButton) {
+                        shareButton.addEventListener('click', () => {
+                            shareConfession(confess.text); // Pass the text directly
+                        });
+                    }
                 } else {
                     // For dummy posts, just show "No comments" initially
                     const commentsListElement = document.getElementById(`comments-list-${confess.id}`);
                     if (commentsListElement) {
                         commentsListElement.innerHTML = '<div style="color: var(--secondary-text-color); font-size: 12px; text-align: center; padding: 10px;">Belum ada komentar.</div>';
+                    }
+                    // Disable share button for dummy posts
+                    const shareButton = post.querySelector(`.share-confession-btn`);
+                    if (shareButton) {
+                        shareButton.disabled = true;
+                        shareButton.style.opacity = '0.5';
+                        shareButton.style.cursor = 'not-allowed';
                     }
                 }
             });
@@ -1246,6 +1280,9 @@
             if (text.length === 0) {
                 modalConfessText.style.borderColor = 'red';
                 setTimeout(() => { modalConfessText.style.borderColor = 'var(--border-color)'; }, 1500);
+                isValid = false;
+            } else if (text.length > CONFESS_MAX_LENGTH) { // New validation for max length
+                showErrorModal(`Pengakuan terlalu panjang. Maksimal ${CONFESS_MAX_LENGTH} karakter.`);
                 isValid = false;
             }
             
@@ -1532,6 +1569,8 @@
             hideModal(confessModal);
             modalConfessText.value = ''; // Clear textarea
             modalAlterName.value = ''; // Clear input
+            modalConfessCharCount.textContent = `0/${CONFESS_MAX_LENGTH}`; // Reset char count
+            modalConfessCharCount.classList.remove('warning'); // Remove warning
         });
 
         // Event listener untuk menutup modal pesan sukses
@@ -1589,6 +1628,18 @@
         selfieChatInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 sendMessageToSelfie(selfieChatInput.value);
+            }
+        });
+
+        // NEW: Event listener for confession text area character count
+        const CONFESS_MAX_LENGTH = 500; // Max length for confession text
+        modalConfessText.addEventListener('input', () => {
+            const currentLength = modalConfessText.value.length;
+            modalConfessCharCount.textContent = `${currentLength}/${CONFESS_MAX_LENGTH}`;
+            if (currentLength >= CONFESS_MAX_LENGTH - 50) { // Warning 50 chars before limit
+                modalConfessCharCount.classList.add('warning');
+            } else {
+                modalConfessCharCount.classList.remove('warning');
             }
         });
 
